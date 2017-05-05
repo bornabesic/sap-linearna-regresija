@@ -4,23 +4,32 @@
 C.data <- read.table("zad57r.dat", header = TRUE, sep = " ")
 C.data <- data.frame(C.data)
 
+X <- C.data$x
+Y <- C.data$y
+Z <- C.data$z
+
 # dijagram raspršenja
-plot(C.data$x, C.data$z)
-plot(C.data$y, C.data$z)
+plot(X, Z)
+model1 <- lm(Z ~ X) # Z = alpha0 + alpha1 * X + epsilon
+summary(model1) # Cdjusted R-squared == R^2 ?
+lines(X, model1$fitted.values, col="orange") # crtanje modela
+
+plot(Y, Z)
+model2 <- lm(Z ~ Y) # Z = alpha0 + alpha1 * X + epsilon
+summary(model2) # Cdjusted R-squared == R^2 ?
+lines(Y, model2$fitted.values, col="purple") # crtanje modela
+
 plot(C.data$x, C.data$y)
-update.packages("rgl")
+library(rgl)
 plot3d(C.data)
 
 # --------------------- b) ---------------------
 
-# kvadratični model
-X <- C.data$x
-Y <- C.data$y
-Z <- C.data$z
-X.squared <- X^2
+model1 <- lm(Z ~ X) # Z = alpha0 + alpha1 * X + epsilon
+model2 <- lm(Z ~ Y) # Z = beta0 + beta1 * Y + epsilon
 
-model <- lm(Y ~ X + X.squared) # Y = beta0 + X * beta1 + X^2 * beta2 + epsilon
-summary(model) # Cdjusted R-squared == R^2 ?
+summary(model1) # Cdjusted R-squared == R^2 ?
+summary(model2)
 
 lines(X, model$fitted.values, col="red") # crtanje modela
 

@@ -1,0 +1,49 @@
+---
+title: "Linearna regresija"
+subtitle: "Zadatak B"
+author: "Borna Bešić, Tomislav Buhiniček, Nikola Zadravec"
+date: '5 svibnja 2017 '
+output: html_document
+---
+
+## Učitavanje podataka
+```{r}
+B.data <- read.table("zad55r.dat", header = TRUE, sep = " ")
+B.data <- data.frame(B.data)
+```
+
+## (a) Prikaz podataka u Kartezijevom koordinatnom sustavu.
+```{r}
+plot(A.data)
+```
+
+## Kvadratični model podataka
+```{r}
+X <- B.data$x
+Y <- B.data$y
+X.squared <- X^2
+
+model <- lm(Y ~ X + X.squared) # Y = theta0 + theta1*X + theta2*X^2 + epsilon
+summary(model) # Bdjusted R-squared == R^2 ?
+
+lines(X, model$fitted.values, col="red") # crtanje modela
+```
+
+## Graf reziduala i standardiziranih reziduala
+```{r}
+plot(model$fitted.values, model$residuals)
+residuals.standardized <- scale(model$residuals)
+plot(model$fitted.values, residuals.standardized)
+```
+
+## provjera normalnosti standardiziranih reziduala
+```{r}
+# provjera normalnosti
+# grafički: QQ plot
+qqnorm(residuals.standardized)
+qqline(residuals.standardized)
+```
+
+# TODO Kolmogorov-Smirnov test
+# TODO testiranje hipoteze beta2=0 uz dvostranu alternativu
+
