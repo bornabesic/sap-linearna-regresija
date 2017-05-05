@@ -1,0 +1,114 @@
+---
+title: "Linearna regresija"
+author: "Borna Bešić, Tomislav Buhiniček, Nikola Zadravec"
+date: '5 svibnja 2017 '
+output: html_document
+---
+
+## a)
+## Učitavanje podataka
+
+```{r}
+A.data <- read.table("zad51r.dat", header = TRUE, sep = " ")
+A.data <- data.frame(A.data)
+```
+
+##Prikaz podataka kao dijagram raspršenja
+
+```{r}
+plot(A.data)
+```
+
+## b)
+## Prikaz aproksimacije podataka kvadratičnim modelom te prikaz nađene krivulje zajedno s početnim točkama
+
+```{r}
+X <- A.data$x
+Y <- A.data$y
+X.squared <- X^2
+
+model <- lm(Y ~ X + X.squared) # Y = beta0 + X * beta1 + X^2 * beta2 + epsilon
+summary(model) # Adjusted R-squared == R^2 ?
+
+plot(A.data)
+lines(X, model$fitted.values, col="red") # crtanje modela
+```
+
+## TODO testiranje hipoteza
+
+```{r}
+
+
+
+
+```
+
+## c)
+## Graf reziduala 
+
+```{r}
+plot(model$fitted.values, model$residuals)
+```
+
+## Graf standardiziranih reziduala
+
+```{r}
+residuals.standardized <- scale(model$residuals)
+plot(model$fitted.values, residuals.standardized)
+```
+
+## Provjera normalnosti grafički putem QQ plota
+
+```{r}
+qqnorm(residuals.standardized)
+qqline(residuals.standardized)
+```
+## TODO Kolmogorov-Smirnov test
+
+```{r}
+
+
+
+
+
+```
+
+## d)
+## Tranformacija podataka logaritmiranjem početnih podataka
+
+```{r}
+Y0 <- log(Y)
+plot(X, Y0)
+model.ln <- lm(Y0 ~ X) # Y0 = beta0 + X * beta1 + epsilon
+lines(X, model.ln$fitted.values, col="red") # crtanje modela
+```
+## Graf reziduala
+
+```{r}
+plot(model.ln$fitted.values, model.ln$residuals)
+```
+
+
+## Graf standardiziranih reziduala
+
+```{r}
+residuals.standardized <- scale(model.ln$residuals)
+plot(model.ln$fitted.values, residuals.standardized)
+```
+## provjera normalnosti grafički pomoću QQ plota
+
+```{r}
+qqnorm(residuals.ln.standardized)
+qqline(residuals.ln.standardized)
+```
+
+# TODO Kolmogorov-Smirnov test
+
+# --------------------- e) ---------------------
+# TODO
+
+# --------------------- f) ---------------------
+# TODO
+
+
+
