@@ -1,0 +1,32 @@
+---
+title: "Linearna regresija"
+subtitle: "Zadatak C"
+author: "Borna Bešić, Tomislav Buhiniček, Nikola Zadravec"
+date: '5 svibnja 2017 '
+output: html_document
+---
+
+## Učitavanje podataka
+```{r}
+C.data <- read.table("zad57r.dat", header = TRUE, sep = " ")
+C.data <- data.frame(C.data)
+
+X <- C.data$x
+Y <- C.data$y
+Z <- C.data$z
+```
+
+## (a) Prikaz podataka u Kartezijevom koordinatnom sustavu.
+```{r}
+plot(C.data$x, C.data$z)
+plot(C.data$y, C.data$z)
+plot(C.data$x, C.data$y)
+library(rgl)
+plot3d(C.data)
+```
+
+```{r}
+
+```
+
+
