@@ -24,9 +24,9 @@ lines(X, model$fitted.values, col="red") # crtanje modela
 # --------------------- c) ---------------------
 
 # graf reziduala i standardiziranih reziduala
-plot(model$fitted.values, model$residuals)
+plot(X, model$residuals)
 residuals.standardized <- scale(model$residuals)
-plot(model$fitted.values, residuals.standardized)
+plot(X, residuals.standardized)
 
 # provjera normalnosti
 # grafički: QQ plot
@@ -44,9 +44,9 @@ model.ln <- lm(Y0 ~ X) # Y0 = beta0 + X * beta1 + epsilon
 lines(X, model.ln$fitted.values, col="red") # crtanje modela
 
 # graf reziduala i standardiziranih reziduala
-plot(model.ln$fitted.values, model.ln$residuals)
+plot(X, model.ln$residuals)
 residuals.ln.standardized <- scale(model.ln$residuals)
-plot(model.ln$fitted.values, residuals.ln.standardized)
+plot(X, residuals.ln.standardized)
 
 # provjera normalnosti
 # grafički: QQ plot
