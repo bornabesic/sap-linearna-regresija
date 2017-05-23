@@ -14,12 +14,22 @@ X <- A.data$x
 Y <- A.data$y
 X.squared <- X^2
 
-model <- lm(Y ~ X + X.squared) # Y = beta0 + X * beta1 + X^2 * beta2 + epsilon
-summary(model) # Adjusted R-squared == R^2 ?
+model <- lm(Y ~ X +  X.squared) # Y = beta0 + X * beta1 + X^2 * beta2 + epsilon, X.squared je isto kao I(X^2)
 
-lines(X, model$fitted.values, col="red") # crtanje modela
+# crtanje modela
+predict <- function(x){
+  beta0 <- model$coefficients["(Intercept)"]
+  beta1 <- model$coefficients["X"]
+  beta2 <- model$coefficients["X.squared"]
+  return(beta0 + beta1 * x + beta2 * x^2)
+}
 
-# TODO testiranje hipoteze beta2=0 uz dvostranu alternativu
+x.draw <- min(X):max(X)
+y.draw <- predict(x.draw)
+lines(x.draw, y.draw, col="red")
+
+# R^2 i testiranje hipoteze beta2=0 (parametar uz X^2) uz dvostranu alternativu
+summary(model)
 
 # --------------------- c) ---------------------
 
@@ -33,7 +43,8 @@ plot(X, residuals.standardized)
 qqnorm(residuals.standardized)
 qqline(residuals.standardized)
 
-# TODO Kolmogorov-Smirnov test
+# Kolmogorov-Smirnov test
+ks.test(model$residuals, 'pnorm')
 
 # --------------------- d) --------------------- 
 
@@ -41,7 +52,17 @@ qqline(residuals.standardized)
 Y0 <- log(Y)
 plot(X, Y0)
 model.ln <- lm(Y0 ~ X) # Y0 = beta0 + X * beta1 + epsilon
-lines(X, model.ln$fitted.values, col="red") # crtanje modela
+summary(model.ln)
+
+# crtanje modela
+predict.ln <- function(x){
+  beta0 <- model.ln$coefficients["(Intercept)"]
+  beta1 <- model.ln$coefficients["X"]
+  return(beta0 + beta1 * x)
+}
+
+y.ln.draw <- predict.ln(x.draw)
+lines(x.draw, y.ln.draw, col="red")
 
 # graf reziduala i standardiziranih reziduala
 plot(X, model.ln$residuals)
@@ -53,7 +74,8 @@ plot(X, residuals.ln.standardized)
 qqnorm(residuals.ln.standardized)
 qqline(residuals.ln.standardized)
 
-# TODO Kolmogorov-Smirnov test
+# Kolmogorov-Smirnov test
+ks.test(model.ln$residuals, 'pnorm')
 
 # --------------------- e) ---------------------
 # TODO
