@@ -78,7 +78,12 @@ qqline(residuals.ln.standardized)
 ks.test(model.ln$residuals, 'pnorm')
 
 # --------------------- e) ---------------------
-# TODO
+# U .rmd izvještaju treba napisati formulu modela za originalne (netransformirane) podatke
+# Regresijska funkcija i originalni podaci već su nacrtani pod a)
+
+Y.predicted <- predict(X)
+plot(Y, Y.predicted)
+abline(a=0, b=1) # y = a + b*x
 
 # --------------------- f) ---------------------
 # TODO
