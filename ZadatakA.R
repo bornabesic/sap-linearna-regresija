@@ -17,7 +17,7 @@ X.squared <- X^2
 model <- lm(Y ~ X +  X.squared) # Y = beta0 + X * beta1 + X^2 * beta2 + epsilon, X.squared je isto kao I(X^2)
 
 # crtanje modela
-predict <- function(x){
+predict.original <- function(x){
   beta0 <- model$coefficients["(Intercept)"]
   beta1 <- model$coefficients["X"]
   beta2 <- model$coefficients["X.squared"]
@@ -25,7 +25,7 @@ predict <- function(x){
 }
 
 x.draw <- min(X):max(X)
-y.draw <- predict(x.draw)
+y.draw <- predict.original(x.draw)
 lines(x.draw, y.draw, col="red")
 
 # R^2 i testiranje hipoteze beta2=0 (parametar uz X^2) uz dvostranu alternativu
@@ -78,12 +78,37 @@ qqline(residuals.ln.standardized)
 ks.test(model.ln$residuals, 'pnorm')
 
 # --------------------- e) ---------------------
+
 # U .rmd izvještaju treba napisati formulu modela za originalne (netransformirane) podatke
 # Regresijska funkcija i originalni podaci već su nacrtani pod a)
 
-Y.predicted <- predict(X)
+Y.predicted <- predict.original(X)
 plot(Y, Y.predicted)
 abline(a=0, b=1) # y = a + b*x
 
 # --------------------- f) ---------------------
-# TODO
+
+X.new <- seq(min(X), max(X))
+X.squared.new <- X.new^2
+
+# originalni model
+prediction <- predict.lm(model, newdata = data.frame(X=X.new, X.squared=X.squared.new), interval = 'prediction', level=0.95) # Y
+confidence <- predict.lm(model, newdata = data.frame(X=X.new, X.squared=X.squared.new), interval = 'confidence', level=0.95) # Y srednje
+plot(X, Y)
+lines(x.draw, y.draw, col="red")
+lines(X.new, prediction[,2])
+lines(X.new, prediction[,3])
+lines(X.new, confidence[,2], col="green")
+lines(X.new, confidence[,3], col="green")
+
+# model sa transformiranim podacima
+prediction.ln <- predict.lm(model.ln, newdata = data.frame(X=X.new), interval = 'prediction', level=0.95) # Y0
+confidence.ln <- predict.lm(model.ln, newdata = data.frame(X=X.new), interval = 'confidence', level=0.95) # Y0 srednje
+plot(X, Y0)
+lines(x.draw, y.ln.draw, col="red")
+lines(X.new, prediction.ln[,2])
+lines(X.new, prediction.ln[,3])
+lines(X.new, confidence.ln[,2], col="green")
+lines(X.new, confidence.ln[,3], col="green")
+
+# Bolji je model sa transformiranim podacima
