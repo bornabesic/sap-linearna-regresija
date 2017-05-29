@@ -208,4 +208,169 @@ lines(X.new, confidence.ln[,3], col="green")
 
 # Zadatak C
 
+U radu “An Ultracentrifuge Flour Absorption Method” (Cereal Chemistry, 1978., str. 96-101) autori su proučavali odnos između apsorpcije vode pšeničnog brašna i raznih karakteristika tog brašna. Konkretno, promatrali su odnos između apsorpcije z (u %) te proteina brašna x (u %) i gubitka škroba y (u Farrandovim jedinicama). Podaci dobiveni pokusom nalaze se u datoteci zad57r.dat (Devore, Jay L., Probability and Statistics for Engineering and the Sciences, 1982., Brooks/Cole Publishing Company, Monterey, California, str. 490).
+
+## Prikaz podataka u Kartezijevom koordinatnom sustavu (2D i 3D)
+
+Na početku zadatka ćemo dane podatke prikazati u 2D koordinatnom sustavu (X,Y), (X,Z) i (Y,Z) te zatim sve podatke zajedno u 3D koordinatnom sustavu (X,Y,Z).
+
+```{r}
+C.data <- read.table("zad57r.dat", header = TRUE, sep = " ")
+C.data <- data.frame(C.data)
+
+X <- C.data$x
+Y <- C.data$y
+Z <- C.data$z
+
+plot (X,Z, xlab = "proteini brašna [%]",ylab = "apsorpcija [%]", main="Prikaz podataka X,Z")
+plot (Y,Z, xlab = "gubitak škroba [Farrandove jedinice]",ylab = "apsorpcija [%]", main="Prikaz podataka Y,Z")
+plot (X,Y, xlab = "proteini brašna [%]",ylab = "gubitak škroba [Farrandove jedinice]", main="Prikaz podataka X,Y")
+
+require(scatterplot3d)
+scatterplot3d(X,Y,Z, pch = 19, color = "green4", main="3D Scatterplot")
+
+```
+## Testovi korelacije
+
+Zatim ćemo nad parom (Y,Z) provesti Pearsonov test korelacije a nad parom (X,Y) Spearmanov test korelacije.
+
+```{r}
+cor(Y,Z)
+cor.test(Y,Z)
+```
+
+Iz dobivenih rezultata vidimo da je $r$ = 0.946518 te zaključujemo da su podaci pozitivno korelirani. Iz test koreliranosti potvrđujemo zbog jako male p-vrijednosti da je korelacija između navedenih podataka različita od nule.
+
 <!-- TODO -->
+
+```{r}
+cor(X,Y,method = "spearman")
+cor.test(X,Y,method = "spearman")
+```
+Pomoću rezultata naslućujemo da je korelacija između danih podataka jako mala jer je $r$ = 0.2870111. 
+
+
+## Prilagodba linearnog modela
+
+Prvi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
+$$z = \alpha_0 + \alpha_1 x $$
+
+```{r}
+X <- C.data$x
+Z <- C.data$z
+
+model <- lm (Z ~ X)
+```
+
+Sljedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima:
+
+```{r}
+plot(X, Z, xlab = "proteini brašna [%]", ylab = "Apsorpcija [%]",
+     main="Prilagodba modela")
+lines(X, model$fitted.values, col="red")
+```
+
+```{r}
+summary(model)
+```
+Iz sažetka iznad doznajemo vrijednost statistike $R^2$ koja iznosi 0.4777. Možemo biti zadovoljni dobivenim rezultatom.  
+
+
+Drugi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
+$$z = \beta_0 + \beta_1 y $$
+
+```{r}
+Y <- C.data$y
+Z <- C.data$z
+
+model2 <- lm (Z ~ Y)
+```
+
+Slijedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima:
+```{r}
+plot(Y, Z, xlab = "gubitak škroba [Farrandove jedinice]", ylab = "Apsorpcija [%]",
+     main="Prilagodba modela")
+lines(Y, model2$fitted.values, col="red")
+```
+
+```{r}
+summary(model2)
+```
+
+Iz sažetka pripradnog modela možemo očitati vrijednost statistike $R^2$ koja iznosi 0.8959. Primjećujemo da je vrijednost statistike $R^2$ veća nego za prvi model čime možemo naslutiti da će koeficijent uz varijablu x biti veći nego uz y u zadnjem modelu.
+
+## Prilagodba linearnog modela s dvije nezavisne varijable
+
+Sljedeći model čiju ćemo prilagodbu provesti jest sljedeći linearni model:
+$$z = \theta_0 + \theta_1 x + \theta_2 y $$
+```{r}
+X <- C.data$x
+Y <- C.data$y
+Z <- C.data$z
+
+model3 <- lm (Z ~ Y + X)
+
+```
+
+### Značajnost dobivenog modela
+
+<!-- TODO -->
+
+```{r}
+summary(model3)
+
+
+```
+
+Iz sažetka očitavamo da je vrijednost statistike $R^2$ = 0.9645. Pošto su p-vrijednosti uz sve koeficijente jako male (X,Y) možemo zaključiti da su oba koeficijenta iznimno značajna za naš model. 
+
+## Provjera normalnosti reziduala
+
+Sljedeće što ćemo napraviti je provjeriti normalnost reziduala. Koristimo ćemo sljedeća dva kriterija: grafički (QQ plot) te Kolmogorov-Smirnovljev test.
+
+Prvo ćemo nacrtati grafove reziduala i standardiziranih reziduala.
+```{r}
+plot(model3$residuals)
+plot(rstandard(model3))
+```
+
+
+### QQ plot
+
+```{r}
+residuals.model3.standardized = model3$residuals
+qqnorm(residuals.model3.standardized, xlab = 'Teoretski kvantili', ylab = 'Kvantili iz uzorka',
+       main = 'QQ plot')
+qqline(residuals.model3.standardized)
+```
+
+Analizom dobivenog QQ plota ne možemo previše zaključiti zbog premalog uzorka, ali možemo naslutiti da reziduale najvjerojatnije ne dolaze iz normalne razdiobe.
+
+### Kolmogorov-Smirnovljev test
+```{r}
+ks.test(model3$residuals, 'pnorm')
+```
+
+Rezultati Kolmogorov-Smirnov testa nam govore da podaci ipak dolaze iz normalne razdiobe pošto p-vrijednost iznosi 0.3327.
+
+## Plohe 95% pouzdanih intervala
+<!-- TODO -->
+
+Na slijedećim grafovima prikazani su parovi podataka, i za originalne i za transformirane podatke. Crnom bojom su označene gornja i donja krivulja pouzdanosti za $Y$ dok su zelenom bojom označene gornja i donja krivulja pouzdanosti za $\overline{Y}$.
+
+```{r}
+X.new <- seq(min(X), max(X),50)
+Y.new <- seq(min(Y), max(Y),50)
+
+prediction <- predict.lm(model3, newdata = data.frame(X=X.new, Y=Y.new),
+                         interval = 'prediction', level=0.95)
+confidence <- predict.lm(model3, newdata = data.frame(X=X.new, Y=Y.new),
+                         interval = 'confidence', level=0.95)
+scatterplot3d(X,Y,Z, pch = 19, color = "green4", main="3D Scatterplot")
+
+lines(X.new, Y.new, prediction[,2])
+lines(X.new, Y.new, prediction[,3])
+lines(X.new, Y.new, confidence[,2], col="green")
+lines(X.new, Y.new, confidence[,3], col="green")
+```
+
