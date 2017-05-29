@@ -23,6 +23,8 @@ Na slijedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog skupa:
 A.data <- read.table("zad51r.dat", header = TRUE, sep = " ")
 A.data <- data.frame(A.data)
 
+par(mfrow=c(1,1)) #za slucaj da je ostala podjela grafova iz gornjeg dijela skripte
+
 plot(A.data, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [nl/g]", main="Prikaz podataka")
 ```
 
@@ -248,10 +250,11 @@ Radi toga radimo provjeru normalnosti na sljedeća dva načina: grafički (QQ pl
 
 ```{r}
 par(mfrow=c(1,2))
-plot(X, model$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+
+plot(N, model$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
      main = 'Graf reziduala')
 
-plot(X, rstandard(model), xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(N, rstandard(model), xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
      main = 'Graf standardiziranih reziduala')
 ```
 
@@ -295,7 +298,7 @@ lines(N, confidence[,3], col="green")
 ```
 
 ## Zaključak
-Iz prethodne analize podataka možemo zaključiti da postoji kvadratna veza između uroda i broj dana proteklih od sjetve žita te time opravdavamo optimalno razdoblje žetve između 28 i 36 nakon cvatnje.  
+Iz prethodne analize podataka možemo zaključiti da postoji kvadratna veza između uroda i broj dana proteklih od sjetve žita te time opravdavamo optimalno razdoblje žetve između 28 i 36 nakon cvatnje.
 
 # Zadatak C
 
@@ -448,20 +451,4 @@ Rezultati Kolmogorov-Smirnov testa nam govore da podaci ipak dolaze iz normalne 
 <!-- TODO -->
 
 Na slijedećim grafovima prikazani su parovi podataka, i za originalne i za transformirane podatke. Crnom bojom su označene gornja i donja krivulja pouzdanosti za $Y$ dok su zelenom bojom označene gornja i donja krivulja pouzdanosti za $\overline{Y}$.
-
-```{r}
-X.new <- seq(min(X), max(X),50)
-Y.new <- seq(min(Y), max(Y),50)
-
-prediction <- predict.lm(model3, newdata = data.frame(X=X.new, Y=Y.new),
-                         interval = 'prediction', level=0.95)
-confidence <- predict.lm(model3, newdata = data.frame(X=X.new, Y=Y.new),
-                         interval = 'confidence', level=0.95)
-scatterplot3d(X,Y,Z, pch = 19, color = "green4", main="3D Scatterplot")
-
-lines(X.new, Y.new, prediction[,2])
-lines(X.new, Y.new, prediction[,3])
-lines(X.new, Y.new, confidence[,2], col="green")
-lines(X.new, Y.new, confidence[,3], col="green")
-```
 
