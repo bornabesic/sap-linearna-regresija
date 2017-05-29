@@ -9,24 +9,18 @@ plot(B.data, xlab = "broj dana proteklih od sjetve žita", ylab = "Urod, (kg/ha)
 
 # --------------------- b) ---------------------
 
-X <- B.data$x
-Y <- B.data$y
-X.squared <- X^2
+urod <- B.data$y
+N <- B.data$x
+N.squared <- I(N^2)
 
-model <- lm(Y ~ X +  X.squared)
-  
-  predict.original <- function(x){
-    theta_0 <- model$coefficients["(Intercept)"]
-    theta_1 <- model$coefficients["X"]
-    theta_2 <- model$coefficients["X.squared"]
-    return(theta_0 + theta_1 * x + theta_2 * x^2)
-  }
+model <- lm(urod ~ N +  N.squared)
 
-plot(X, Y, xlab = "broj dana proteklih od sjetve žita", ylab = "Urod, (kg/ha)",
+f = function(x, koeficijenti)
+  return(koeficijenti[[1]] + koeficijenti[[2]] * x + koeficijenti[[3]] * x^2)
+
+plot(N, urod, xlab = "broj dana proteklih od sjetve žita", ylab = "Urod, (kg/ha)",
      main="Utjecaj datuma žetve na urod")
-x.draw <- min(X):max(X)
-y.draw <- predict.original(x.draw)
-lines(x.draw, y.draw, col="red")
+curve(f(x, model$coefficients), add = TRUE, col = "red")
 
 summary(model)
 
@@ -35,10 +29,10 @@ summary(model)
 # --------------------- c) ---------------------
 
 par(mfrow=c(1,2))
-plot(X, model$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(N, model$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
      main = 'Graf reziduala')
 
-plot(X, rstandard(model), xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(N, rstandard(model), xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
      main = 'Graf standardiziranih reziduala')
 
 
@@ -48,19 +42,29 @@ qqline(rstandard(model))
 
 ks.test(rstandard(model), 'pnorm')
 
+plot(N,urod)
+prediction = predict.lm(model,B.data,interval = "prediction")
+confidence = predict.lm(model,B.data,interval = "confidence")
+
+curve(f(x, model$coefficients), add = TRUE, col = "red")
+lines(N, prediction[,2])
+lines(N, prediction[,3])
+lines(N, confidence[,2], col="green")
+lines(N, confidence[,3], col="green")
+
 
 # --------------------- d) --------------------- 
 
 # transformacija podataka
-Y0 <- log(Y)
-plot(X, Y0)
-model.ln <- lm(Y0 ~ X) # Y0 = beta0 + X * beta1 + epsilon
-lines(X, model.ln$fitted.values, col="red") # crtanje modela
+urod0 <- log(urod)
+plot(N, urod0)
+model.ln <- lm(urod0 ~ N) # urod0 = beta0 + N * beta1 + epsilon
+lines(N, model.ln$fitted.values, col="red") # crtanje modela
 
 # graf reziduala i standardiziranih reziduala
-plot(X, model.ln$residuals)
+plot(N, model.ln$residuals)
 residuals.ln.standardized <- scale(model.ln$residuals)
-plot(X, residuals.ln.standardized)
+plot(N, residuals.ln.standardized)
 
 # provjera normalnosti
 # grafički: QQ plot

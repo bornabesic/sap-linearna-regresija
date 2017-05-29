@@ -204,7 +204,98 @@ lines(X.new, confidence.ln[,3], col="green")
 
 # Zadatak B
 
-<!-- TODO -->
+U članaku “Determination of Biological Maturity and Effect of Harvesting and Drying Conditions on Milling Quality of Paddy” (J. Agricultural Eng. Research, 1975., str. 353-361) obrađuju se podaci o žetvi paddyja, vrste žita u Indiji. Varijabla x predstavlja datum žetve (tj. to je broj dana proteklih od sjetve žita), a y predstavlja urod (u kg/ha). 
+Podaci se nalaze u datoteci zad55r.dat (Devore, Jay L., Probability and Statistics for Engineering and the Sciences, 1982., Brooks/Cole Publishing Company, Monterey, California, str. 478).
+
+## Prikaz podataka u Kartezijevom koordinatnom sustavu
+
+Na slijedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog skupa:
+
+```{r}
+B.data <- read.table("zad55r.dat", header = TRUE, sep = " ")
+B.data <- data.frame(B.data)
+
+plot(B.data, xlab = "broj dana proteklih od sjetve žita,(N)", ylab = "Urod,(kg/ha)", main="Utjecaj datuma žetve na urod")
+```
+
+## Prilagodba kvadratičnog modela
+
+Prvi model čiju ćemo prilagodbu provesti jest sljedeći kvadratični model: $$y = \theta_0 + \theta_1 x + \theta_2 x^2$$
+
+```{r}
+urod <- B.data$y
+N <- B.data$x
+N.squared <- I(N^2)
+
+model <- lm(urod ~ N +  N.squared)
+```
+
+Sljedeći graf prikazuje parabolu dobivenu prilagodbom navedenog modela s empirijskim podacima:
+
+```{r}
+f = function(x, koeficijenti)
+  return(koeficijenti[[1]] + koeficijenti[[2]] * x + koeficijenti[[3]] * x^2)
+
+plot(N, urod, xlab = "broj dana proteklih od sjetve žita", ylab = "Urod, (kg/ha)",
+     main="Utjecaj datuma žetve na urod")
+curve(f(x, model$coefficients), add = TRUE, col = "red")
+```
+
+## Provjera normalnosti reziduala
+
+Pretpostavka linearne regresije jest da su reziduali normalno distribuirani. 
+Radi toga radimo provjeru normalnosti na sljedeća dva načina: grafički (QQ plot) te Kolmogorov-Smirnovljevim testom.
+
+```{r}
+par(mfrow=c(1,2))
+plot(X, model$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+     main = 'Graf reziduala')
+
+plot(X, rstandard(model), xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+     main = 'Graf standardiziranih reziduala')
+```
+
+### QQ plot
+
+```{r}
+qqnorm(rstandard(model), xlab = 'Teoretski kvantili', ylab = 'Kvantili iz uzorka',
+       main = 'QQ plot')
+qqline(rstandard(model))
+```
+Analizom dobivenog QQ plota može se pretpostaviti da reziduali dolaze iz normalne distribcije.
+
+### Kolmogorov-Smirnovljev test
+
+```{r}
+ks.test(rstandard(model), 'pnorm')
+```
+Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku 0.9857. Test na normalnost za reziduale ne može odbaciti H0 da standardizirani reziduali dolaze iz normalne razdiobe.
+
+## Hipoteza $H_0 : \theta_2 = 0$
+
+```{r}
+summary(model)
+```
+
+Testiramo sljedeću hipotezu: $H_0 : \theta_2 = 0$, u odnosu na alternativu $H_a : \theta_2 != 0$. Kao što je vidljivo, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^ 2$) iznosi $1.40\cdot10^{-5}$. 
+Prema tome, uz razinu značajnosti $\alpha=1%$, odbacujemo nultu hipotezu u korist alternative. $\theta_2$ je značajan koeficijent.
+
+## Krivulje 95% pouzdanih intervala
+
+```{r}
+plot(N,urod)
+prediction = predict.lm(model,B.data,interval = "prediction")
+confidence = predict.lm(model,B.data,interval = "confidence")
+
+curve(f(x, model$coefficients), add = TRUE, col = "red")
+lines(N, prediction[,2])
+lines(N, prediction[,3])
+lines(N, confidence[,2], col="green")
+lines(N, confidence[,3], col="green")
+```
+
+## Zaključak
+Iz prethodne analize podataka možemo zaključiti da postoji kvadratna veza između uroda i broj dana proteklih od sjetve žita te time opravdavamo optimalno razdoblje žetve između 28 i 36 nakon cvatnje.  
 
 # Zadatak C
 
