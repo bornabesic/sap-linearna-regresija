@@ -61,7 +61,7 @@ lines(x.draw, y.draw, col="red")
 summary(model)
 ```
 
-Testiramo slijedeću hipotezu: $\theta_2 = 0$, uz dvostranu alternativu. Kao što je vidljivo, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^ 2$) iznosi $6.65\cdot10^{-8}$. Prema tome, uz razinu značajnosti $\alpha=5\%$, odbacujemo nultu hipotezu u korist alternative.
+Testiramo slijedeću hipotezu: $\theta_2 = 0$, uz dvostranu alternativu. Kao što je vidljivo, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^ 2$) iznosi $0.000206$. Prema tome, uz razinu značajnosti $\alpha=5\%$, odbacujemo nultu hipotezu u korist alternative.
 
 Također, iz priloženog sažetka doznajemo vrijednost statistike $R^2$ koja iznosi 0.9663. To je prilično zadovoljavajuća vrijednost iako možemo bolje kao što ćemo vidjeti u nastavku.
 
@@ -74,7 +74,7 @@ Radi toga radimo provjeru normalnosti na sljedeća dva načina: grafički (QQ pl
 par(mfrow=c(1,2))
 plot(X, model$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
      main = 'Graf reziduala')
-residuals.standardized <- scale(model$residuals)
+residuals.standardized <- rstandard(model)
 plot(X, residuals.standardized, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
      main = 'Graf standardiziranih reziduala')
 ```
@@ -84,17 +84,17 @@ plot(X, residuals.standardized, xlab='Redni broj reziduala', ylab = 'Iznos rezid
 ```{r}
 qqnorm(residuals.standardized, xlab = 'Teoretski kvantili', ylab = 'Kvantili iz uzorka',
        main = 'QQ plot')
-qqline(residuals.standardized)
+abline(a=0, b=1)
 ```
 
 Analizom dobivenog QQ plota, iako je uzorak relativno male veličine, može se pretpostaviti da reziduali vrlo vjerojatno ne dolaze iz normalne distribcije.
 
 ### Kolmogorov-Smirnovljev test
 ```{r}
-ks.test(model$residuals, 'pnorm')
+ks.test(residuals.standardized, 'pnorm')
 ```
 
-Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku 0.01267. Sa razinom značajnosti $\alpha=5\%$ možem odbaciti početnu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
+Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku 0.6473. Sa razinom značajnosti $\alpha=5\%$ ne možemo odbaciti početnu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
 
 ## Logaritamska transformacija podataka
 Slijedeće što ćemo napraviti jest transformirati originalni skup podataka kako bi vidjeli ima li transformacija utjecaj na rezultate. Transformacija koju ćemo koristi je slijedeća: $y^0 = ln(y)$ .
@@ -137,7 +137,7 @@ Kao što smo napravili i za originalni skup podataka, provesti ćemo provjeru no
 par(mfrow=c(1,2))
 plot(X, model.ln$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
      main = 'Graf reziduala')
-residuals.ln.standardized <- scale(model.ln$residuals)
+residuals.ln.standardized <- rstandard(model.ln)
 plot(X, residuals.ln.standardized, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
      main = 'Graf standardiziranih reziduala')
 ```
@@ -148,25 +148,29 @@ Za razliku od reziduala originalnih podataka, reziduali logaritamski transformir
 ```{r}
 qqnorm(residuals.ln.standardized, xlab = 'Teoretski kvantili', ylab = 'Kvantili iz uzorka',
        main = 'QQ plot')
-qqline(residuals.ln.standardized)
+abline(a=0, b=1)
 ```
 
 Također, QQ plot reziduala transformiranih podataka pokazuje puno veće podudaranje sa pravcem nego u slučaju netransformiranih podataka.
 
 ### Kolmogorov-Smirnovljev test
 ```{r}
-ks.test(model.ln$residuals, 'pnorm')
+ks.test(residuals.ln.standardized, 'pnorm')
 ```
 
-Ipak, provedbom Kolmogorov-Smirnovljevog testa nad transformiranim podacima, dobivamo p-vrijednost u iznosu 0.0163. Slijedi da ćemo unatoč svemu na razini značajnosti od $\alpha=5\%$ odbaciti nultu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
+Provedbom Kolmogorov-Smirnovljevog testa nad transformiranim podacima, dobivamo p-vrijednost u iznosu 0.9644. Slijedi da ne možemo na razini značajnosti od $\alpha=5\%$ odbaciti nultu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
 
-## Model za originalne podatke
-<!-- TODO e) nije jasno što se ovdje treba napraviti-->
-$$\hat{y} = 382.60556492 - 9.23726255 \cdot x + 0.05795002 \cdot x^2 $$
+## Eksponencijalni model za originalne podatke
+
+Uz pretpostavku da je linearan model dobar za transformirane podatke, njegova formula glasi: 
+
+$$\hat{y} = e^{5.9404951 - 0.0323287 \cdot x} $$
+
+Na grafu ispod prikazani su parovi izmjerenih i procijenjenih podataka $(y, \hat{y})$ uz pravac $y=x$.
 
 ```{r}
 Y.predicted <- predict.original(X)
-plot(Y, Y.predicted, xlab="y", ylab="y^", main="Usporedba zadanih podataka i procjena")
+plot(Y, Y.predicted, xlab="y", ylab="y_kapa", main="Usporedba zadanih podataka i procjena")
 abline(a=0, b=1)
 ```
 
@@ -202,7 +206,7 @@ lines(X.new, confidence.ln[,2], col="green")
 lines(X.new, confidence.ln[,3], col="green")
 ```
 
-<!-- TODO komentirati koji je model bolji -->
+Linearan model za transformirane podatke odnosno eksponencijalan model za originalne podatke je zasigurno bolji. Osim što je iz grafova vidljiva bolja prilagodba, 95% pouzdani intervali za Y te srednju vrijednost od Y su puno uži. Također, statistika $R^2$ modela za transformirane podatke iznosi 0.9952 dok za originalne podatke iznosi 0.9663.
 
 # Zadatak B
 
@@ -263,7 +267,7 @@ plot(N, rstandard(model), xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
 ```{r}
 qqnorm(rstandard(model), xlab = 'Teoretski kvantili', ylab = 'Kvantili iz uzorka',
        main = 'QQ plot')
-qqline(rstandard(model))
+abline(a=0, b=1)
 ```
 Analizom dobivenog QQ plota može se pretpostaviti da reziduali dolaze iz normalne distribcije.
 
