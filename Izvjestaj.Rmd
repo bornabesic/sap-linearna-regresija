@@ -321,31 +321,42 @@ plot (Y,Z, xlab = "gubitak škroba [Farrandove jedinice]",ylab = "apsorpcija [%]
 plot (X,Y, xlab = "proteini brašna [%]",ylab = "gubitak škroba [Farrandove jedinice]", main="Prikaz podataka X,Y")
 
 require(scatterplot3d)
-scatterplot3d(X,Y,Z, pch = 19, color = "green4", main="3D Scatterplot")
+scatterplot3d(X,Y,Z, pch = 19, color = "green4", xlab="proteini brašna [%]",ylab="gubitak škroba [Farrandove jedinice]",zlab = "apsorpcija [%]",main ="Prikaz podataka X,Y,Z" )
 
 ```
 ## Testovi korelacije
 
-Zatim ćemo nad parom (Y,Z) provesti Pearsonov test korelacije a nad parom (X,Y) Spearmanov test korelacije.
+Zatim ćemo nad parom (Y,Z) provesti Pearsonov test korelacije, a nad parom (X,Y) Spearmanov test korelacije.
 
 ```{r}
 cor(Y,Z)
 cor.test(Y,Z)
 ```
 
-Iz dobivenih rezultata vidimo da je $r$ = 0.946518 te zaključujemo da su podaci pozitivno korelirani. Iz test koreliranosti potvrđujemo zbog jako male p-vrijednosti da je korelacija između navedenih podataka različita od nule.
+Nad parom (Y,Z) smo radili Pearsonov test korelacije. Iz dobivenih rezultata vidimo da je $r$ = 0.946518 te zaključujemo da su podaci pozitivno korelirani. P-vrijednost iz testa koreliranosti je jako mala ($2.751e-14$) pa možemo odbaciti hipotezu da je koreliranost jednaka 0. Možemo primjetiti povezanost između velike korelacije i male p-vrijednosti.
 
-<!-- TODO -->
 
 ```{r}
 cor(X,Y,method = "spearman")
 cor.test(X,Y,method = "spearman")
+
+sumY = rnorm(28,0,0.01);
+sumX = rnorm(28,0,0.01);
+
+noviX=X+sumX
+noviY=Y+sumY
+
+cor(noviX,noviY,method = "spearman")
+cor.test(noviX,noviY,method = "spearman")
+
 ```
-Pomoću rezultata naslućujemo da je korelacija između danih podataka jako mala jer je $r$ = 0.2870111. 
+Nad parom (X,Y) smo radili Spearmanov test korelacije. Pomoću rezultata naslućujemo da je korelacija između danih podataka jako mala jer je $r$ = 0.2870111. P-vrijednost testa je 0.1386 pa ne možemo odbaciti hipotezu da je korelacija jednaka 0. 
+Problem kod Spearmanovog testa je što ne može naći egzaktnu p-vrijednost ako ima jednake vrijendosti. Zbog toga smo napravili šum za obje varijable X i Y koji je iz normalne distribucije $N (0, 0.0001)$. Ponovno smo izračunali stupanj korelacije i napravili Spearmanov test. Novo dobivene vrijednosti se malo razlikuju od prijašnjih pa zbog p-vrijednosti veće od 0.05 ne možemo zaključiti da je korelacija različita od 0.   
 
 
 ## Prilagodba linearnog modela
 
+Sljedeći korak našeg zadatka su prilagodbe linearnih modela.
 Prvi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
 $$z = \alpha_0 + \alpha_1 x $$
 
@@ -356,7 +367,7 @@ Z <- C.data$z
 model <- lm (Z ~ X)
 ```
 
-Sljedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima:
+Sljedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima. Dobili smo pravac $z = 3.321*x + 7.753$.
 
 ```{r}
 plot(X, Z, xlab = "proteini brašna [%]", ylab = "Apsorpcija [%]",
@@ -380,7 +391,7 @@ Z <- C.data$z
 model2 <- lm (Z ~ Y)
 ```
 
-Slijedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima:
+Slijedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima. Dobili smo pravac $z = 0.39722*y + 34.21809$.
 ```{r}
 plot(Y, Z, xlab = "gubitak škroba [Farrandove jedinice]", ylab = "Apsorpcija [%]",
      main="Prilagodba modela")
@@ -395,6 +406,7 @@ Iz sažetka pripradnog modela možemo očitati vrijednost statistike $R^2$ koja 
 
 ## Prilagodba linearnog modela s dvije nezavisne varijable
 
+Nakon što smo radili prilagodbe s jednom nezavisnom varijablom radimo prilagodbu s dvije nezavisne varijable. 
 Sljedeći model čiju ćemo prilagodbu provesti jest sljedeći linearni model:
 $$z = \theta_0 + \theta_1 x + \theta_2 y $$
 ```{r}
@@ -408,7 +420,6 @@ model3 <- lm (Z ~ Y + X)
 
 ### Značajnost dobivenog modela
 
-<!-- TODO -->
 
 ```{r}
 summary(model3)
@@ -416,7 +427,17 @@ summary(model3)
 
 ```
 
-Iz sažetka očitavamo da je vrijednost statistike $R^2$ = 0.9645. Pošto su p-vrijednosti uz sve koeficijente jako male (X,Y) možemo zaključiti da su oba koeficijenta iznimno značajna za naš model. 
+Iz sažetka očitavamo da je vrijednost statistike $R^2$ = 0.9645. Pošto su p-vrijednosti uz sve koeficijente jako male (X,Y) možemo zaključiti da su oba koeficijenta iznimno značajna za naš model.
+
+### Uspoređivanje proširenog modela s reduciranima koristeći ANOVU
+
+```{r}
+
+anova(model,model3)
+anova(model2,model3)
+```
+Koristeći ANOVU usporedili smo prvi model ($z = \alpha_0 + \alpha_1 x $) i treći model ($z = \theta_0 + \theta_1 x + \theta_2 y $). Pošto smo dobili da je p-vrijednost jednaka $4.181e-16$ možemo odbaciti hipotezu da je novododani koeficijent jednak 0. Zaključujemo da je prošireni model bolji od reduciranog.
+Zatim smo uspredili drugi model ($z = \beta_0 + \beta_1 y $) i treći model ($z = \theta_0 + \theta_1 x + \theta_2 y $). Ponovno smo dobili jaku malu p-vrijednost koja iznosi $2.789e-07$ te možemo odbaciti hipotezu da podaci podržavaju reducirani oblik. 
 
 ## Provjera normalnosti reziduala
 
@@ -432,23 +453,50 @@ plot(rstandard(model3))
 ### QQ plot
 
 ```{r}
-residuals.model3.standardized = model3$residuals
-qqnorm(residuals.model3.standardized, xlab = 'Teoretski kvantili', ylab = 'Kvantili iz uzorka',
+qqnorm(rstandard(model3), xlab = 'Teoretski kvantili', ylab = 'Kvantili iz uzorka',
        main = 'QQ plot')
-qqline(residuals.model3.standardized)
+abline(a=0,b=1)
 ```
 
-Analizom dobivenog QQ plota ne možemo previše zaključiti zbog premalog uzorka, ali možemo naslutiti da reziduale najvjerojatnije ne dolaze iz normalne razdiobe.
+Analizom dobivenog QQ plota  možemo naslutiti da reziduale najvjerojatnije dolaze iz normalne razdiobe. Kolmogorov-Smirnovljev test bi to trebao potvrditi jer nam je veličina uzorka jako mala.
 
 ### Kolmogorov-Smirnovljev test
 ```{r}
-ks.test(model3$residuals, 'pnorm')
+ks.test(rstandard(model3), 'pnorm')
 ```
 
-Rezultati Kolmogorov-Smirnov testa nam govore da podaci ipak dolaze iz normalne razdiobe pošto p-vrijednost iznosi 0.3327.
+Rezultati Kolmogorov-Smirnov potvrđuju nam da podaci dolaze iz normalne razdiobe pošto p-vrijednost iznosi 0.3584. Interpretacija dane p-vrijednosti je da ne možemo odbaciti hipotezu da podaci dolaze iz normalne razdiobe.
 
 ## Plohe 95% pouzdanih intervala
-<!-- TODO -->
 
-Na slijedećim grafovima prikazani su parovi podataka, i za originalne i za transformirane podatke. Crnom bojom su označene gornja i donja krivulja pouzdanosti za $Y$ dok su zelenom bojom označene gornja i donja krivulja pouzdanosti za $\overline{Y}$.
 
+Na sljedećem grafu su prikazani originalni podaci zajedno s plohama za intervale predikcije (siva boja) i intervale pouzdanosti (crvena boja).
+
+```{r}
+
+require(scatterplot3d)
+require(plot3D)
+#scatterplot3d(X,Y,Z, pch = 19, color = "green4", main="3D Scatterplot")
+X.new = seq(min(X), max(X),length.out = 1000)
+Y.new = seq(min(Y), max(Y),length.out = 1000)
+
+prediction <- predict.lm(model3, newdata = data.frame(X=X.new, Y=Y.new),
+                         interval = 'prediction', level=0.95)
+confidence <- predict.lm(model3, newdata = data.frame(X=X.new, Y=Y.new),
+                         interval = 'confidence', level=0.95)
+
+
+scatter3D(X, Y, Z, colvar = NULL, col = "blue",
+          pch = 19, cex = 0.5)
+scatter3D(X.new,Y.new,prediction[,2], add = TRUE, colkey = FALSE, 
+         pch = 18, cex = 3, col = "gray")
+scatter3D(X.new,Y.new,prediction[,3], add = TRUE, colkey = FALSE, 
+         pch = 18, cex = 3, col = "gray")
+scatter3D(X.new,Y.new,confidence[,2], add = TRUE, colkey = FALSE, 
+         pch = 18, cex = 3, col = "red")
+scatter3D(X.new,Y.new,confidence[,3], add = TRUE, colkey = FALSE, 
+         pch = 18, cex = 3, col = "red")
+
+
+
+```
