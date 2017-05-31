@@ -1,10 +1,13 @@
 ---
 header-includes:
    - \usepackage[croatian]{babel}
+   - \usepackage[utf8]{inputenc}
 title: "Linearna regresija"
 author: "Borna Bešić, Tomislav Buhiniček, Nikola Zadravec"
 date: '\today'
-output: pdf_document
+output: 
+  pdf_document: 
+    keep_tex: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -25,13 +28,14 @@ A.data <- data.frame(A.data)
 
 par(mfrow=c(1,1)) #za slucaj da je ostala podjela grafova iz gornjeg dijela skripte
 
-plot(A.data, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [nl/g]", main="Prikaz podataka")
+plot(A.data, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [nl/g]",
+     main="Prikaz podataka")
 ```
 
 ## Prilagodba kvadratičnog modela
 
 Prvi model čiju ćemo prilagodbu provesti jest slijedeći kvadratični model:
-$$y = \theta_0 + \theta_1 x + \theta_2 x^2$$
+$y = \theta_0 + \theta_1 x + \theta_2 x^2$
 
 ```{r}
 X <- A.data$x
@@ -61,7 +65,7 @@ lines(x.draw, y.draw, col="red")
 summary(model)
 ```
 
-Testiramo slijedeću hipotezu: $\theta_2 = 0$, uz dvostranu alternativu. Kao što je vidljivo, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^ 2$) iznosi $0.000206$. Prema tome, uz razinu značajnosti $\alpha=5\%$, odbacujemo nultu hipotezu u korist alternative.
+Testiramo slijedeću hipotezu: $\theta_2 = 0$, uz dvostranu alternativu. Kao što je vidljivo, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^ 2$) iznosi 0.000206. Prema tome, uz razinu značajnosti $\alpha=5\%$, odbacujemo nultu hipotezu u korist alternative.
 
 Također, iz priloženog sažetka doznajemo vrijednost statistike $R^2$ koja iznosi 0.9663. To je prilično zadovoljavajuća vrijednost iako možemo bolje kao što ćemo vidjeti u nastavku.
 
@@ -101,12 +105,13 @@ Slijedeće što ćemo napraviti jest transformirati originalni skup podataka kak
 
 ```{r}
 Y0 <- log(Y)
-plot(X, Y0, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [ln(nl/g)]", main="Prikaz transformiranih podataka")
+plot(X, Y0, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [ln(nl/g)]",
+     main="Prikaz transformiranih podataka")
 ```
 
 Kao što je vidljivo na dijagramu raspršenja, nakon transformacije podaci izgledaju puno bolje.
 Model kojeg ćemo u ovom slučaju iskoristiti glasi:
-$$y^0 = \theta_0 + \theta_1 x$$
+$y^0 = \theta_0 + \theta_1 x$
 
 ```{r}
 model.ln <- lm(Y0 ~ X)
@@ -166,11 +171,12 @@ Uz pretpostavku da je linearan model dobar za transformirane podatke, njegova fo
 
 $$\hat{y} = e^{5.9404951 - 0.0323287 \cdot x} $$
 
-Na grafu ispod prikazani su parovi izmjerenih i procijenjenih podataka $(y, \hat{y})$ uz pravac $y=x$.
+Na grafu ispod prikazani su parovi izmjerenih i procijenjenih podataka <!--$(y, \hat{y})$--> uz pravac $y=x$.
 
 ```{r}
 Y.predicted <- predict.original(X)
-plot(Y, Y.predicted, xlab="y", ylab="y_kapa", main="Usporedba zadanih podataka i procjena")
+plot(Y, Y.predicted, xlab="y", ylab="y_kapa",
+     main="Usporedba zadanih podataka i procjena")
 abline(a=0, b=1)
 ```
 
@@ -221,12 +227,13 @@ Na slijedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog skupa:
 B.data <- read.table("zad55r.dat", header = TRUE, sep = " ")
 B.data <- data.frame(B.data)
 
-plot(B.data, xlab = "broj dana proteklih od sjetve žita,(N)", ylab = "Urod,(kg/ha)", main="Utjecaj datuma žetve na urod")
+plot(B.data, xlab = "broj dana proteklih od sjetve zita,(N)", ylab = "Urod,(kg/ha)",
+     main="Utjecaj datuma zetve na urod")
 ```
 
 ## Prilagodba kvadratičnog modela
 
-Prvi model čiju ćemo prilagodbu provesti jest sljedeći kvadratični model: $$y = \theta_0 + \theta_1 x + \theta_2 x^2$$
+Prvi model čiju ćemo prilagodbu provesti jest sljedeći kvadratični model: $y = \theta_0 + \theta_1 x + \theta_2 x^2$
 
 ```{r}
 urod <- B.data$y
@@ -242,8 +249,8 @@ Sljedeći graf prikazuje parabolu dobivenu prilagodbom navedenog modela s empiri
 f = function(x, koeficijenti)
   return(koeficijenti[[1]] + koeficijenti[[2]] * x + koeficijenti[[3]] * x^2)
 
-plot(N, urod, xlab = "broj dana proteklih od sjetve žita", ylab = "Urod, (kg/ha)",
-     main="Utjecaj datuma žetve na urod")
+plot(N, urod, xlab = "broj dana proteklih od sjetve zita", ylab = "Urod, (kg/ha)",
+     main="Utjecaj datuma zetve na urod")
 curve(f(x, model$coefficients), add = TRUE, col = "red")
 ```
 
@@ -320,12 +327,19 @@ X <- C.data$x
 Y <- C.data$y
 Z <- C.data$z
 
-plot (X,Z, xlab = "proteini brašna [%]",ylab = "apsorpcija [%]", main="Prikaz podataka X,Z")
-plot (Y,Z, xlab = "gubitak škroba [Farrandove jedinice]",ylab = "apsorpcija [%]", main="Prikaz podataka Y,Z")
-plot (X,Y, xlab = "proteini brašna [%]",ylab = "gubitak škroba [Farrandove jedinice]", main="Prikaz podataka X,Y")
+plot (X,Z, xlab = "proteini brasna [%]",ylab = "apsorpcija [%]",
+      main="Prikaz podataka X,Z")
+plot (Y,Z, xlab = "gubitak skroba [Farrandove jedinice]",ylab = "apsorpcija [%]",
+      main="Prikaz podataka Y,Z")
+plot (X,Y, xlab = "proteini brasna [%]",ylab = "gubitak skroba [Farrandove jedinice]",
+      main="Prikaz podataka X,Y")
 
 require(scatterplot3d)
-scatterplot3d(X,Y,Z, pch = 19, color = "green4", xlab="proteini brašna [%]",ylab="gubitak škroba [Farrandove jedinice]",zlab = "apsorpcija [%]",main ="Prikaz podataka X,Y,Z" )
+scatterplot3d(X,Y,Z, pch = 19, color = "green4",
+              xlab="proteini brasna [%]",
+              ylab="gubitak skroba [Farrandove jedinice]",
+              zlab = "apsorpcija [%]",
+              main ="Prikaz podataka X,Y,Z" )
 
 ```
 ## Testovi korelacije
@@ -362,7 +376,7 @@ Problem kod Spearmanovog testa je što ne može naći egzaktnu p-vrijednost ako 
 
 Sljedeći korak našeg zadatka su prilagodbe linearnih modela.
 Prvi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
-$$z = \alpha_0 + \alpha_1 x $$
+$z = \alpha_0 + \alpha_1 x $
 
 ```{r}
 X <- C.data$x
@@ -374,7 +388,7 @@ model <- lm (Z ~ X)
 Sljedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima. Dobili smo pravac $z = 3.321*x + 7.753$.
 
 ```{r}
-plot(X, Z, xlab = "proteini brašna [%]", ylab = "Apsorpcija [%]",
+plot(X, Z, xlab = "proteini brasna [%]", ylab = "Apsorpcija [%]",
      main="Prilagodba modela")
 lines(X, model$fitted.values, col="red")
 ```
@@ -386,7 +400,7 @@ Iz sažetka iznad doznajemo vrijednost statistike $R^2$ koja iznosi 0.4777. Mož
 
 
 Drugi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
-$$z = \beta_0 + \beta_1 y $$
+$z = \beta_0 + \beta_1 y $
 
 ```{r}
 Y <- C.data$y
@@ -397,7 +411,7 @@ model2 <- lm (Z ~ Y)
 
 Slijedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima. Dobili smo pravac $z = 0.39722*y + 34.21809$.
 ```{r}
-plot(Y, Z, xlab = "gubitak škroba [Farrandove jedinice]", ylab = "Apsorpcija [%]",
+plot(Y, Z, xlab = "gubitak skroba [Farrandove jedinice]", ylab = "Apsorpcija [%]",
      main="Prilagodba modela")
 lines(Y, model2$fitted.values, col="red")
 ```
@@ -412,7 +426,7 @@ Iz sažetka pripradnog modela možemo očitati vrijednost statistike $R^2$ koja 
 
 Nakon što smo radili prilagodbe s jednom nezavisnom varijablom radimo prilagodbu s dvije nezavisne varijable. 
 Sljedeći model čiju ćemo prilagodbu provesti jest sljedeći linearni model:
-$$z = \theta_0 + \theta_1 x + \theta_2 y $$
+$z = \theta_0 + \theta_1 x + \theta_2 y $
 ```{r}
 X <- C.data$x
 Y <- C.data$y
@@ -440,8 +454,8 @@ Iz sažetka očitavamo da je vrijednost statistike $R^2$ = 0.9645. Pošto su p-v
 anova(model,model3)
 anova(model2,model3)
 ```
-Koristeći ANOVU usporedili smo prvi model ($z = \alpha_0 + \alpha_1 x $) i treći model ($z = \theta_0 + \theta_1 x + \theta_2 y $). Pošto smo dobili da je p-vrijednost jednaka $4.181e-16$ možemo odbaciti hipotezu da je novododani koeficijent jednak 0. Zaključujemo da je prošireni model bolji od reduciranog.
-Zatim smo uspredili drugi model ($z = \beta_0 + \beta_1 y $) i treći model ($z = \theta_0 + \theta_1 x + \theta_2 y $). Ponovno smo dobili jaku malu p-vrijednost koja iznosi $2.789e-07$ te možemo odbaciti hipotezu da podaci podržavaju reducirani oblik. 
+Koristeći ANOVU usporedili smo prvi model $z = \alpha_0 + \alpha_1 x $ i treći model $z = \theta_0 + \theta_1 x + \theta_2 y $. Pošto smo dobili da je p-vrijednost jednaka 4.181e-16 možemo odbaciti hipotezu da je novododani koeficijent jednak 0. Zaključujemo da je prošireni model bolji od reduciranog.
+Zatim smo uspredili drugi model $z = \beta_0 + \beta_1 y $ i treći model $z = \theta_0 + \theta_1 x + \theta_2 y $. Ponovno smo dobili jaku malu p-vrijednost koja iznosi 2.789e-07 te možemo odbaciti hipotezu da podaci podržavaju reducirani oblik. 
 
 ## Provjera normalnosti reziduala
 
