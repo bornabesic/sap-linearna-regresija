@@ -505,7 +505,7 @@ Brooks/Cole Publishing Company, Monterey, California, str. 478).
 \subsection{Prikaz podataka u Kartezijevom koordinatnom
 sustavu}\label{prikaz-podataka-u-kartezijevom-koordinatnom-sustavu-1}
 
-Na slijedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog
+Na sljedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog
 skupa:
 
 \begin{Shaded}
@@ -513,7 +513,7 @@ skupa:
 \NormalTok{B.data <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"zad55r.dat"}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{sep =} \StringTok{" "}\NormalTok{)}
 \NormalTok{B.data <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(B.data)}
 
-\KeywordTok{plot}\NormalTok{(B.data, }\DataTypeTok{xlab =} \StringTok{"broj dana proteklih od sjetve zita,(N)"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Urod,(kg/ha)"}\NormalTok{,}
+\KeywordTok{plot}\NormalTok{(B.data, }\DataTypeTok{xlab =} \StringTok{"broj dana proteklih od sjetve zita,(N)"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"urod,(kg/ha)"}\NormalTok{,}
      \DataTypeTok{main=}\StringTok{"Utjecaj datuma zetve na urod"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -544,13 +544,44 @@ empirijskim podacima:
 \NormalTok{f =}\StringTok{ }\NormalTok{function(x, koeficijenti)}
   \KeywordTok{return}\NormalTok{(koeficijenti[[}\DecValTok{1}\NormalTok{]] +}\StringTok{ }\NormalTok{koeficijenti[[}\DecValTok{2}\NormalTok{]] *}\StringTok{ }\NormalTok{x +}\StringTok{ }\NormalTok{koeficijenti[[}\DecValTok{3}\NormalTok{]] *}\StringTok{ }\NormalTok{x^}\DecValTok{2}\NormalTok{)}
 
-\KeywordTok{plot}\NormalTok{(N, urod, }\DataTypeTok{xlab =} \StringTok{"broj dana proteklih od sjetve zita"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Urod, (kg/ha)"}\NormalTok{,}
+\KeywordTok{plot}\NormalTok{(N, urod, }\DataTypeTok{xlab =} \StringTok{"broj dana proteklih od sjetve zita"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"urod, (kg/ha)"}\NormalTok{,}
      \DataTypeTok{main=}\StringTok{"Utjecaj datuma zetve na urod"}\NormalTok{)}
 \KeywordTok{curve}\NormalTok{(}\KeywordTok{f}\NormalTok{(x, model$coefficients), }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = urod ~ N + N.squared)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -304.00 -117.23   13.32  118.63  318.73 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) -1074.6320   618.0231  -1.739    0.106    
+## N             293.9240    42.2303   6.960 9.92e-06 ***
+## N.squared      -4.5464     0.6753  -6.733 1.40e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 204.1 on 13 degrees of freedom
+## Multiple R-squared:  0.7939, Adjusted R-squared:  0.7622 
+## F-statistic: 25.03 on 2 and 13 DF,  p-value: 3.483e-05
+\end{verbatim}
+
+Vrijednost statistike \(R^2\) se može vidjeti pozivom funkcije summary
+nad modelom i iznosi 0.7939.
 
 \subsection{Provjera normalnosti
 reziduala}\label{provjera-normalnosti-reziduala-1}
@@ -610,7 +641,7 @@ Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku
 standardizirani reziduali dolaze iz normalne razdiobe.
 
 \subsection{\texorpdfstring{Hipoteza
-\(H_0 : \theta_2 = 0\)}{Hipoteza H_0 : \textbackslash{}theta_2 = 0}}\label{hipoteza-h_0-theta_2-0}
+\(H_0 : \theta_2 = 0\)}{Hipoteza H\_0 : \textbackslash{}theta\_2 = 0}}\label{hipoteza-h_0-theta_2-0}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -641,18 +672,88 @@ standardizirani reziduali dolaze iz normalne razdiobe.
 \end{verbatim}
 
 Testiramo sljedeću hipotezu: \(H_0 : \theta_2 = 0\), u odnosu na
-alternativu \(H_a : \theta_2 != 0\). Kao što je vidljivo, p-vrijednost
-za parametar \(\theta_2\) (koji stoji uz \(x^ 2\)) iznosi
-\(1.40\cdot10^{-5}\). Prema tome, uz razinu značajnosti \(\alpha=1\%\),
-odbacujemo nultu hipotezu u korist alternative. \(\theta_2\) je značajan
-koeficijent.
+alternativu \(H_a : \theta_2 != 0\). Kao što je vidljivo iz izlaza
+funkcije summary, p-vrijednost za parametar \(\theta_2\) (koji stoji uz
+\(x^2\)) iznosi \(1.40\cdot10^{-5}\). Prema tome, uz razinu značajnosti
+\(\alpha=1%\), odbacujemo nultu hipotezu u korist alternative.
+\(\theta_2\) je značajan koeficijent.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{N.confidence =}\StringTok{ }\KeywordTok{confint}\NormalTok{(model, }\StringTok{'N'}\NormalTok{, }\DataTypeTok{level=}\FloatTok{0.95}\NormalTok{)}
+\NormalTok{N.confidence}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     2.5 %   97.5 %
+## N 202.691 385.1569
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{N.squared.confidence =}\StringTok{ }\KeywordTok{confint}\NormalTok{(model, }\StringTok{'N.squared'}\NormalTok{, }\DataTypeTok{level=}\FloatTok{0.95}\NormalTok{)}
+\NormalTok{N.squared.confidence}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##               2.5 %    97.5 %
+## N.squared -6.005241 -3.087634
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{help}\NormalTok{(plot)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## starting httpd help server ...
+\end{verbatim}
+
+\begin{verbatim}
+##  done
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{help}\NormalTok{(plot)}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{100}\NormalTok{,}\DecValTok{500}\NormalTok{), }\DataTypeTok{type=}\StringTok{'n'}\NormalTok{, }\KeywordTok{c}\NormalTok{(-}\DecValTok{7}\NormalTok{,-}\DecValTok{2}\NormalTok{), }\DataTypeTok{panel.first=}\KeywordTok{grid}\NormalTok{(),}\DataTypeTok{xlab =} \StringTok{"N koeficijent"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"N^2 koeficijent"}\NormalTok{)}
+\KeywordTok{rect}\NormalTok{(}\DataTypeTok{xleft=}\NormalTok{N.confidence[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{], }\DataTypeTok{ybottom=}\NormalTok{N.squared.confidence[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{], }\DataTypeTok{xright=}\NormalTok{N.confidence[}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{], }\DataTypeTok{ytop=}\NormalTok{N.squared.confidence[}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{],}\DataTypeTok{col=}\StringTok{'gray'}\NormalTok{)}
+
+\KeywordTok{require}\NormalTok{(}\StringTok{'car'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: car
+\end{verbatim}
+
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-23-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{confidenceEllipse}\NormalTok{(model,}\DataTypeTok{fill=}\OtherTok{TRUE}\NormalTok{,}\DataTypeTok{levels=}\FloatTok{0.95}\NormalTok{,}\DataTypeTok{xlab =} \StringTok{"N koeficijent"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"N^2 koeficijent"}\NormalTok{,}\DataTypeTok{col=}\StringTok{'black'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-23-2.pdf}
+
+Iz prvog grafa u kojem uspoređujemo pouzdane intervale za parametre
+prihvaćenog modela vidimo kako je interval za koeficijent uz \(x^2\) je
+za dva reda veličine manji od interval za koeficijent uz \(x\).
+Usporedbom tog grafa i drugog grafa (prikaz pouzdanog područja za
+parametre modela) vidimo kako je površina elipse (95\% pouzdano
+područje) manja od umnoška pouzdanih intervala prvog i drugog parametra.
 
 \subsection{Krivulje 95\% pouzdanih
 intervala}\label{krivulje-95-pouzdanih-intervala-1}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{plot}\NormalTok{(N,urod)}
+\KeywordTok{help}\NormalTok{(plot)}
+\KeywordTok{plot}\NormalTok{(N,urod,}\DataTypeTok{ylim=}\KeywordTok{c}\NormalTok{(}\DecValTok{2000}\NormalTok{, }\DecValTok{4200}\NormalTok{), }\DataTypeTok{xlab=}\StringTok{"broj dana proteklih od sjetve zita"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Urod, (kg/ha)"}\NormalTok{,}\DataTypeTok{main=}\StringTok{"Utjecaj datuma zetve na urod"}\NormalTok{)}
 \NormalTok{prediction =}\StringTok{ }\KeywordTok{predict.lm}\NormalTok{(model,B.data,}\DataTypeTok{interval =} \StringTok{"prediction"}\NormalTok{)}
 \NormalTok{confidence =}\StringTok{ }\KeywordTok{predict.lm}\NormalTok{(model,B.data,}\DataTypeTok{interval =} \StringTok{"confidence"}\NormalTok{)}
 
@@ -664,7 +765,7 @@ intervala}\label{krivulje-95-pouzdanih-intervala-1}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-23-1.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-24-1.pdf}
 
 \subsection{Zaključak}\label{zakljucak}
 
@@ -704,7 +805,7 @@ sustavu (X,Y,Z).
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-24-1.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-25-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -713,7 +814,7 @@ sustavu (X,Y,Z).
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-24-2.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-25-2.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -722,7 +823,7 @@ sustavu (X,Y,Z).
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-24-3.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-25-3.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -744,7 +845,7 @@ sustavu (X,Y,Z).
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-24-4.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-25-4.pdf}
 \#\# Testovi korelacije
 
 Zatim ćemo nad parom (Y,Z) provesti Pearsonov test korelacije, a nad
@@ -771,7 +872,7 @@ parom (X,Y) Spearmanov test korelacije.
 ##  Pearson's product-moment correlation
 ## 
 ## data:  Y and Z
-## t = 14.958, df = 26, p-value = 2.753e-14
+## t = 14.958, df = 26, p-value = 2.751e-14
 ## alternative hypothesis: true correlation is not equal to 0
 ## 95 percent confidence interval:
 ##  0.8864776 0.9752210
@@ -833,7 +934,7 @@ p-vrijednosti.
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 0.2917351
+## [1] 0.2731253
 \end{verbatim}
 
 \begin{Shaded}
@@ -847,11 +948,11 @@ p-vrijednosti.
 ##  Spearman's rank correlation rho
 ## 
 ## data:  noviX and noviY
-## S = 2588, p-value = 0.1319
+## S = 2656, p-value = 0.1593
 ## alternative hypothesis: true rho is not equal to 0
 ## sample estimates:
 ##       rho 
-## 0.2917351
+## 0.2731253
 \end{verbatim}
 
 Nad parom (X,Y) smo radili Spearmanov test korelacije. Pomoću rezultata
@@ -869,8 +970,8 @@ možemo zaključiti da je korelacija različita od 0.
 modela}\label{prilagodba-linearnog-modela}
 
 Sljedeći korak našeg zadatka su prilagodbe linearnih modela. Prvi model
-čiju ćemo prilagodbu provesti jest slijedeći linearni model: \(z =
-\alpha_0 + \alpha_1 x \)
+čiju ćemo prilagodbu provesti jest slijedeći linearni model: \$z =
+\alpha\_0 + \alpha\_1 x \$
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -893,7 +994,7 @@ zajedno s empirijskim podacima. Dobili smo pravac
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-28-1.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-29-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -926,7 +1027,7 @@ Iz sažetka iznad doznajemo vrijednost statistike \(R^2\) koja iznosi
 0.4777. Možemo biti zadovoljni dobivenim rezultatom.
 
 Drugi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
-\(z = \beta_0 + \beta_1 y \)
+\$z = \beta\_0 + \beta\_1 y \$
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -949,7 +1050,7 @@ zajedno s empirijskim podacima. Dobili smo pravac
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-31-1.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-32-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -988,8 +1089,8 @@ varijable}\label{prilagodba-linearnog-modela-s-dvije-nezavisne-varijable}
 
 Nakon što smo radili prilagodbe s jednom nezavisnom varijablom radimo
 prilagodbu s dvije nezavisne varijable. Sljedeći model čiju ćemo
-prilagodbu provesti jest sljedeći linearni model: \(z = \theta_0 +
-\theta_1 x + \theta_2 y \)
+prilagodbu provesti jest sljedeći linearni model: \$z = \theta\_0 +
+\theta\_1 x + \theta\_2 y \$
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1075,13 +1176,13 @@ ANOVU}\label{usporeivanje-prosirenog-modela-s-reduciranima-koristeci-anovu}
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \end{verbatim}
 
-Koristeći ANOVU usporedili smo prvi model \(z = \alpha_0 + \alpha_1 x
-\) i treći model \(z = \theta_0 + \theta_1 x + \theta_2 y \). Pošto
+Koristeći ANOVU usporedili smo prvi model \$z = \alpha\_0 + \alpha\_1 x
+\$ i treći model \$z = \theta\_0 + \theta\_1 x + \theta\_2 y \$. Pošto
 smo dobili da je p-vrijednost jednaka 4.181e-16 možemo odbaciti hipotezu
 da je novododani koeficijent jednak 0. Zaključujemo da je prošireni
-model bolji od reduciranog. Zatim smo uspredili drugi model \(z =
-\beta_0 + \beta_1 y \) i treći model \(z = \theta_0 + \theta_1 x +
-\theta_2 y \). Ponovno smo dobili jaku malu p-vrijednost koja iznosi
+model bolji od reduciranog. Zatim smo uspredili drugi model \$z =
+\beta\_0 + \beta\_1 y \$ i treći model \$z = \theta\_0 + \theta\_1 x +
+\theta\_2 y \$. Ponovno smo dobili jaku malu p-vrijednost koja iznosi
 2.789e-07 te možemo odbaciti hipotezu da podaci podržavaju reducirani
 oblik.
 
@@ -1100,7 +1201,7 @@ Prvo ćemo nacrtati grafove reziduala i standardiziranih reziduala.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-36-1.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-37-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1108,7 +1209,7 @@ Prvo ćemo nacrtati grafove reziduala i standardiziranih reziduala.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-36-2.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-37-2.pdf}
 
 \subsubsection{QQ plot}\label{qq-plot-3}
 
@@ -1120,7 +1221,7 @@ Prvo ćemo nacrtati grafove reziduala i standardiziranih reziduala.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-37-1.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-38-1.pdf}
 
 Analizom dobivenog QQ plota možemo naslutiti da reziduale
 najvjerojatnije dolaze iz normalne razdiobe. Kolmogorov-Smirnovljev test
@@ -1191,7 +1292,7 @@ intervale predikcije (siva boja) i intervale pouzdanosti (crvena boja).
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-39-1.pdf}
+\includegraphics{Izvjestaj_files/figure-latex/unnamed-chunk-40-1.pdf}
 
 
 \end{document}

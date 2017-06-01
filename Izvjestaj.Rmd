@@ -221,13 +221,13 @@ Podaci se nalaze u datoteci zad55r.dat (Devore, Jay L., Probability and Statisti
 
 ## Prikaz podataka u Kartezijevom koordinatnom sustavu
 
-Na slijedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog skupa:
+Na sljedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog skupa:
 
 ```{r}
 B.data <- read.table("zad55r.dat", header = TRUE, sep = " ")
 B.data <- data.frame(B.data)
 
-plot(B.data, xlab = "broj dana proteklih od sjetve zita,(N)", ylab = "Urod,(kg/ha)",
+plot(B.data, xlab = "broj dana proteklih od sjetve zita,(N)", ylab = "urod,(kg/ha)",
      main="Utjecaj datuma zetve na urod")
 ```
 
@@ -249,10 +249,12 @@ Sljedeći graf prikazuje parabolu dobivenu prilagodbom navedenog modela s empiri
 f = function(x, koeficijenti)
   return(koeficijenti[[1]] + koeficijenti[[2]] * x + koeficijenti[[3]] * x^2)
 
-plot(N, urod, xlab = "broj dana proteklih od sjetve zita", ylab = "Urod, (kg/ha)",
+plot(N, urod, xlab = "broj dana proteklih od sjetve zita", ylab = "urod, (kg/ha)",
      main="Utjecaj datuma zetve na urod")
 curve(f(x, model$coefficients), add = TRUE, col = "red")
+summary(model)
 ```
+Vrijednost statistike $R^2$ se može vidjeti pozivom funkcije summary nad modelom i iznosi 0.7939.
 
 ## Provjera normalnosti reziduala
 
@@ -291,13 +293,31 @@ Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku 0.9857. T
 summary(model)
 ```
 
-Testiramo sljedeću hipotezu: $H_0 : \theta_2 = 0$, u odnosu na alternativu $H_a : \theta_2 != 0$. Kao što je vidljivo, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^ 2$) iznosi $1.40\cdot10^{-5}$. 
+Testiramo sljedeću hipotezu: $H_0 : \theta_2 = 0$, u odnosu na alternativu $H_a : \theta_2 != 0$. Kao što je vidljivo iz izlaza funkcije summary, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^2$) iznosi $1.40\cdot10^{-5}$. 
 Prema tome, uz razinu značajnosti $\alpha=1%$, odbacujemo nultu hipotezu u korist alternative. $\theta_2$ je značajan koeficijent.
+
+```{r}
+
+N.confidence = confint(model, 'N', level=0.95)
+N.confidence
+N.squared.confidence = confint(model, 'N.squared', level=0.95)
+N.squared.confidence
+help(plot)
+help(plot)
+plot(c(100,500), type='n', c(-7,-2), panel.first=grid(),xlab = "N koeficijent", ylab = "N^2 koeficijent")
+rect(xleft=N.confidence[1,1], ybottom=N.squared.confidence[1,1], xright=N.confidence[1,2], ytop=N.squared.confidence[1,2],col='gray')
+
+require('car')
+confidenceEllipse(model,fill=TRUE,levels=0.95,xlab = "N koeficijent", ylab = "N^2 koeficijent",col='black')
+```
+
+Iz prvog grafa u kojem uspoređujemo pouzdane intervale za parametre prihvaćenog modela vidimo kako je interval za koeficijent uz $x^2$ je za dva reda veličine manji od interval za koeficijent uz $x$. Usporedbom tog grafa i drugog grafa (prikaz pouzdanog područja za parametre modela) vidimo kako je površina elipse (95% pouzdano područje) manja od umnoška pouzdanih intervala prvog i drugog parametra.
 
 ## Krivulje 95% pouzdanih intervala
 
 ```{r}
-plot(N,urod)
+help(plot)
+plot(N,urod,ylim=c(2000, 4200), xlab="broj dana proteklih od sjetve zita", ylab="Urod, (kg/ha)",main="Utjecaj datuma zetve na urod")
 prediction = predict.lm(model,B.data,interval = "prediction")
 confidence = predict.lm(model,B.data,interval = "confidence")
 
@@ -491,7 +511,6 @@ Rezultati Kolmogorov-Smirnov potvrđuju nam da podaci dolaze iz normalne razdiob
 Na sljedećem grafu su prikazani originalni podaci zajedno s plohama za intervale predikcije (siva boja) i intervale pouzdanosti (crvena boja).
 
 ```{r}
-
 require(scatterplot3d)
 require(plot3D)
 #scatterplot3d(X,Y,Z, pch = 19, color = "green4", main="3D Scatterplot")
