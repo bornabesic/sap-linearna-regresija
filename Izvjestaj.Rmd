@@ -4,9 +4,7 @@ header-includes:
 title: "Linearna regresija"
 author: "Borna Bešić, Tomislav Buhiniček, Nikola Zadravec"
 date: '\today'
-output: 
-  pdf_document: 
-    keep_tex: yes
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -103,7 +101,8 @@ Slijedeće što ćemo napraviti jest transformirati originalni skup podataka kak
 
 ```{r}
 Y0 <- log(Y)
-plot(X, Y0, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [ln(nl/g)]", main="Prikaz transformiranih podataka")
+plot(X, Y0, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [ln(nl/g)]",
+     main="Prikaz transformiranih podataka")
 ```
 
 Kao što je vidljivo na dijagramu raspršenja, nakon transformacije podaci izgledaju puno bolje.
@@ -235,7 +234,9 @@ Na slijedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog skupa:
 B.data <- read.table("zad55r.dat", header = TRUE, sep = " ")
 B.data <- data.frame(B.data)
 
-plot(B.data, xlab = "broj dana proteklih od sjetve žita,(N)", ylab = "Urod,(kg/ha)", main="Utjecaj datuma žetve na urod")
+plot(B.data, xlab = "broj dana proteklih od sjetve žita,(N)",
+     ylab = "Urod,(kg/ha)",
+     main="Utjecaj datuma žetve na urod")
 ```
 
 ## Prilagodba kvadratičnog modela
@@ -334,12 +335,19 @@ X <- C.data$x
 Y <- C.data$y
 Z <- C.data$z
 
-plot (X,Z, xlab = "proteini brašna [%]",ylab = "apsorpcija [%]", main="Prikaz podataka X,Z")
-plot (Y,Z, xlab = "gubitak škroba [Farrandove jedinice]",ylab = "apsorpcija [%]", main="Prikaz podataka Y,Z")
-plot (X,Y, xlab = "proteini brašna [%]",ylab = "gubitak škroba [Farrandove jedinice]", main="Prikaz podataka X,Y")
+plot (X,Z, xlab = "proteini brašna [%]",ylab = "apsorpcija [%]",
+      main="Prikaz podataka X,Z")
+plot (Y,Z, xlab = "gubitak škroba [Farrandove jedinice]",ylab = "apsorpcija [%]",
+      main="Prikaz podataka Y,Z")
+plot (X,Y, xlab = "proteini brašna [%]",ylab = "gubitak škroba [Farrandove jedinice]",
+      main="Prikaz podataka X,Y")
 
 require(scatterplot3d)
-scatterplot3d(X,Y,Z, pch = 19, color = "green4", xlab="proteini brašna [%]",ylab="gubitak škroba [Farrandove jedinice]",zlab = "apsorpcija [%]",main ="Prikaz podataka X,Y,Z" )
+scatterplot3d(X,Y,Z, pch = 19, color = "green4",
+              xlab="proteini brašna [%]",
+              ylab="gubitak škroba [Farrandove jedinice]",
+              zlab = "apsorpcija [%]",
+              main ="Prikaz podataka X,Y,Z" )
 
 ```
 ## Testovi korelacije
