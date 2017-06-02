@@ -63,7 +63,7 @@ lines(x.draw, y.draw, col="red")
 summary(model)
 ```
 
-Testiramo slijedeću hipotezu: \(\theta_2 = 0\), uz dvostranu alternativu. Kao što je vidljivo, p-vrijednost za parametar \(\theta_2\) (koji stoji uz \(x^ 2\)) iznosi \(0.000206\). Prema tome, uz razinu značajnosti \( \alpha = 5 \% \), odbacujemo nultu hipotezu u korist alternative.
+Testiramo slijedeću hipotezu: \(\theta_2 = 0\), uz dvostranu alternativu. Kao što je vidljivo, p-vrijednost za parametar \(\theta_2\) (koji stoji uz \(x^ 2\)) iznosi \(0.000206\). Prema tome, uz razinu značajnosti \(\alpha = 5\%\), odbacujemo nultu hipotezu u korist alternative.
 
 Također, iz priloženog sažetka doznajemo vrijednost statistike \(R^2\) koja iznosi 0.9663. To je prilično zadovoljavajuća vrijednost iako možemo bolje kao što ćemo vidjeti u nastavku.
 
@@ -160,7 +160,7 @@ Također, QQ plot reziduala transformiranih podataka pokazuje puno veće podudar
 ks.test(residuals.ln.standardized, 'pnorm')
 ```
 
-Provedbom Kolmogorov-Smirnovljevog testa nad transformiranim podacima, dobivamo p-vrijednost u iznosu 0.9644. Slijedi da ne možemo na razini značajnosti od \( \alpha = 5 \% \) odbaciti nultu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
+Provedbom Kolmogorov-Smirnovljevog testa nad transformiranim podacima, dobivamo p-vrijednost u iznosu 0.9644. Slijedi da ne možemo na razini značajnosti od \(\alpha=5\%\) odbaciti nultu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
 
 ## Eksponencijalni model za originalne podatke
 
@@ -173,11 +173,11 @@ predict.e <- function(x){
   return(exp(5.9404951 - 0.0323287 * x))
 }
 
-y.draw <- predict.e(x.draw)
+y.draw.e <- predict.e(x.draw)
 plot(X, Y,
      xlab="Vrijeme [t]", ylab = "Kolicina etilena [nl/g]",
      main="Eksponencijalni model za originalne podatke")
-lines(x.draw, y.draw, col="red")
+lines(x.draw, y.draw.e, col="red")
 ```
 
 Na grafu ispod prikazani su parovi izmjerenih i procijenjenih podataka \((y, \hat{y})\) uz pravac \(y=x\).
@@ -298,8 +298,8 @@ Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku 0.9857. T
 summary(model)
 ```
 
-Testiramo sljedeću hipotezu: \(H_0 : \theta_2 = 0\), u odnosu na alternativu \(H_a : \theta_2 != 0\). Kao što je vidljivo, p-vrijednost za parametar \(\theta_2\) (koji stoji uz \( x^2 \)) iznosi \(1.40\cdot10^{-5}\). 
-Prema tome, uz razinu značajnosti \( \alpha = 1 \% \), odbacujemo nultu hipotezu u korist alternative. \(theta_2\) je značajan koeficijent.
+Testiramo sljedeću hipotezu: \(H_0 : \theta_2 = 0\), u odnosu na alternativu \(H_a : \theta_2 != 0\). Kao što je vidljivo, p-vrijednost za parametar \(\theta_2\) (koji stoji uz \(x^2\)) iznosi \(1.40 \cdot 10^{-5}\). 
+Prema tome, uz razinu značajnosti \(\alpha=1\%\), odbacujemo nultu hipotezu u korist alternative. \(theta_2\) je značajan koeficijent.
 
 ## Krivulje 95% pouzdanih intervala
 
@@ -376,7 +376,9 @@ Problem kod Spearmanovog testa je što ne može naći egzaktnu p-vrijednost ako 
 
 Sljedeći korak našeg zadatka su prilagodbe linearnih modela.
 Prvi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
-$$z = \alpha_0 + \alpha_1 x $$
+\begin{equation}
+z = \alpha_0 + \alpha_1 x
+\end{equation}
 
 ```{r}
 X <- C.data$x
@@ -400,7 +402,9 @@ Iz sažetka iznad doznajemo vrijednost statistike \(R^2\) koja iznosi 0.4777. Mo
 
 
 Drugi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
-$$z = \beta_0 + \beta_1 y $$
+\begin{equation}
+z = \beta_0 + \beta_1 y
+\end{equation}
 
 ```{r}
 Y <- C.data$y
@@ -426,7 +430,9 @@ Iz sažetka pripradnog modela možemo očitati vrijednost statistike \(R^2\) koj
 
 Nakon što smo radili prilagodbe s jednom nezavisnom varijablom radimo prilagodbu s dvije nezavisne varijable. 
 Sljedeći model čiju ćemo prilagodbu provesti jest sljedeći linearni model:
-$$z = \theta_0 + \theta_1 x + \theta_2 y $$
+\begin{equation}
+z = \theta_0 + \theta_1 x + \theta_2 y
+\end{equation}
 ```{r}
 X <- C.data$x
 Y <- C.data$y
