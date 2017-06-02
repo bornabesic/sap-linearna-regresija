@@ -1,7 +1,6 @@
 ---
 header-includes:
    - \usepackage[croatian]{babel}
-   - \usepackage[utf8]{inputenc}
 title: "Linearna regresija"
 author: "Borna Bešić, Tomislav Buhiniček, Nikola Zadravec"
 date: '\today'
@@ -28,14 +27,13 @@ A.data <- data.frame(A.data)
 
 par(mfrow=c(1,1)) #za slucaj da je ostala podjela grafova iz gornjeg dijela skripte
 
-plot(A.data, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [nl/g]",
-     main="Prikaz podataka")
+plot(A.data, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [nl/g]", main="Prikaz podataka")
 ```
 
 ## Prilagodba kvadratičnog modela
 
 Prvi model čiju ćemo prilagodbu provesti jest slijedeći kvadratični model:
-$y = \theta_0 + \theta_1 x + \theta_2 x^2$
+$$y = \theta_0 + \theta_1 x + \theta_2 x^2$$
 
 ```{r}
 X <- A.data$x
@@ -65,9 +63,9 @@ lines(x.draw, y.draw, col="red")
 summary(model)
 ```
 
-Testiramo slijedeću hipotezu: $\theta_2 = 0$, uz dvostranu alternativu. Kao što je vidljivo, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^ 2$) iznosi 0.000206. Prema tome, uz razinu značajnosti $\alpha=5\%$, odbacujemo nultu hipotezu u korist alternative.
+Testiramo slijedeću hipotezu: \(\theta_2 = 0\), uz dvostranu alternativu. Kao što je vidljivo, p-vrijednost za parametar \(\theta_2\) (koji stoji uz \(x^ 2\)) iznosi \(0.000206\). Prema tome, uz razinu značajnosti \( \alpha = 5 \% \), odbacujemo nultu hipotezu u korist alternative.
 
-Također, iz priloženog sažetka doznajemo vrijednost statistike $R^2$ koja iznosi 0.9663. To je prilično zadovoljavajuća vrijednost iako možemo bolje kao što ćemo vidjeti u nastavku.
+Također, iz priloženog sažetka doznajemo vrijednost statistike \(R^2\) koja iznosi 0.9663. To je prilično zadovoljavajuća vrijednost iako možemo bolje kao što ćemo vidjeti u nastavku.
 
 ## Provjera normalnosti reziduala
 
@@ -76,10 +74,10 @@ Radi toga radimo provjeru normalnosti na sljedeća dva načina: grafički (QQ pl
 
 ```{r}
 par(mfrow=c(1,2))
-plot(X, model$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(X, model$residuals, xlab='Vrijeme [t]', ylab = 'Iznos reziduala',
      main = 'Graf reziduala')
 residuals.standardized <- rstandard(model)
-plot(X, residuals.standardized, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(X, residuals.standardized, xlab='Vrijeme [t]', ylab = 'Iznos reziduala',
      main = 'Graf standardiziranih reziduala')
 ```
 
@@ -91,27 +89,26 @@ qqnorm(residuals.standardized, xlab = 'Teoretski kvantili', ylab = 'Kvantili iz 
 abline(a=0, b=1)
 ```
 
-Analizom dobivenog QQ plota, iako je uzorak relativno male veličine, može se pretpostaviti da reziduali vrlo vjerojatno ne dolaze iz normalne distribcije.
+Analizom dobivenog QQ plota, iako je uzorak relativno male veličine, vidi se iz podataka da se dosta dobro grupiraju oko pravca.
 
 ### Kolmogorov-Smirnovljev test
 ```{r}
 ks.test(residuals.standardized, 'pnorm')
 ```
 
-Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku 0.6473. Sa razinom značajnosti $\alpha=5\%$ ne možemo odbaciti početnu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
+Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku 0.6473. Sa razinom značajnosti \(\alpha=5\%\) ne možemo odbaciti početnu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
 
 ## Logaritamska transformacija podataka
-Slijedeće što ćemo napraviti jest transformirati originalni skup podataka kako bi vidjeli ima li transformacija utjecaj na rezultate. Transformacija koju ćemo koristi je slijedeća: $y^0 = ln(y)$ .
+Slijedeće što ćemo napraviti jest transformirati originalni skup podataka kako bi vidjeli ima li transformacija utjecaj na rezultate. Transformacija koju ćemo koristi je slijedeća: \(y^0 = ln(y)\) .
 
 ```{r}
 Y0 <- log(Y)
-plot(X, Y0, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [ln(nl/g)]",
-     main="Prikaz transformiranih podataka")
+plot(X, Y0, xlab = "Vrijeme [t]", ylab = "Kolicina etilena [ln(nl/g)]", main="Prikaz transformiranih podataka")
 ```
 
 Kao što je vidljivo na dijagramu raspršenja, nakon transformacije podaci izgledaju puno bolje.
 Model kojeg ćemo u ovom slučaju iskoristiti glasi:
-$y^0 = \theta_0 + \theta_1 x$
+$$y^0 = \theta_0 + \theta_1 x$$
 
 ```{r}
 model.ln <- lm(Y0 ~ X)
@@ -132,7 +129,7 @@ lines(x.draw, y.ln.draw, col="red")
 summary(model.ln)
 ```
 
-Sada iz sažetka vidimo da je vrijednost $R^2$ statistike jednaka 0.9952 što je puno bolje od prethodnog slučaja kada smo koristili netrasnformirane podatake. Možemo biti zadovoljni pošto je ova vrijednost vrlo blizu broju 1.
+Sada iz sažetka vidimo da je vrijednost \(R^2\) statistike jednaka 0.9952 što je puno bolje od prethodnog slučaja kada smo koristili netrasnformirane podatake. Možemo biti zadovoljni pošto je ova vrijednost vrlo blizu broju 1.
 
 ## Provjera normalnosti reziduala transformiranih podataka
 
@@ -140,10 +137,10 @@ Kao što smo napravili i za originalni skup podataka, provesti ćemo provjeru no
 
 ```{r}
 par(mfrow=c(1,2))
-plot(X, model.ln$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(X, model.ln$residuals, xlab='Vrijeme [t]', ylab = 'Iznos reziduala',
      main = 'Graf reziduala')
 residuals.ln.standardized <- rstandard(model.ln)
-plot(X, residuals.ln.standardized, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(X, residuals.ln.standardized, xlab='Vrijeme [t]', ylab = 'Iznos reziduala',
      main = 'Graf standardiziranih reziduala')
 ```
 
@@ -163,7 +160,7 @@ Također, QQ plot reziduala transformiranih podataka pokazuje puno veće podudar
 ks.test(residuals.ln.standardized, 'pnorm')
 ```
 
-Provedbom Kolmogorov-Smirnovljevog testa nad transformiranim podacima, dobivamo p-vrijednost u iznosu 0.9644. Slijedi da ne možemo na razini značajnosti od $\alpha=5\%$ odbaciti nultu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
+Provedbom Kolmogorov-Smirnovljevog testa nad transformiranim podacima, dobivamo p-vrijednost u iznosu 0.9644. Slijedi da ne možemo na razini značajnosti od \( \alpha = 5 \% \) odbaciti nultu hipotezu da su reziduali normalno distribuirani u korist dvostrane alternative.
 
 ## Eksponencijalni model za originalne podatke
 
@@ -171,18 +168,29 @@ Uz pretpostavku da je linearan model dobar za transformirane podatke, njegova fo
 
 $$\hat{y} = e^{5.9404951 - 0.0323287 \cdot x} $$
 
-Na grafu ispod prikazani su parovi izmjerenih i procijenjenih podataka <!--$(y, \hat{y})$--> uz pravac $y=x$.
+```{r}
+predict.e <- function(x){
+  return(exp(5.9404951 - 0.0323287 * x))
+}
+
+y.draw <- predict.e(x.draw)
+plot(X, Y,
+     xlab="Vrijeme [t]", ylab = "Kolicina etilena [nl/g]",
+     main="Eksponencijalni model za originalne podatke")
+lines(x.draw, y.draw, col="red")
+```
+
+Na grafu ispod prikazani su parovi izmjerenih i procijenjenih podataka \((y, \hat{y})\) uz pravac \(y=x\).
 
 ```{r}
 Y.predicted <- predict.original(X)
-plot(Y, Y.predicted, xlab="y", ylab="y_kapa",
-     main="Usporedba zadanih podataka i procjena")
+plot(Y, Y.predicted, xlab="y", ylab="y_kapa", main="Usporedba zadanih podataka i procjena")
 abline(a=0, b=1)
 ```
 
 ## Krivulje 95% pouzdanih intervala
 
-Na slijedećim grafovima prikazani su parovi podataka, i za originalne i za transformirane podatke. Crnom bojom su označene gornja i donja krivulja pouzdanosti za $Y$ dok su zelenom bojom označene gornja i donja krivulja pouzdanosti za $\overline{Y}$.
+Na slijedećim grafovima prikazani su parovi podataka, i za originalne i za transformirane podatke. Crnom bojom su označene gornja i donja krivulja pouzdanosti za \(Y\) dok su zelenom bojom označene gornja i donja krivulja pouzdanosti za \(\overline{Y}\).
 
 ```{r}
 X.new <- seq(min(X), max(X))
@@ -212,7 +220,7 @@ lines(X.new, confidence.ln[,2], col="green")
 lines(X.new, confidence.ln[,3], col="green")
 ```
 
-Linearan model za transformirane podatke odnosno eksponencijalan model za originalne podatke je zasigurno bolji. Osim što je iz grafova vidljiva bolja prilagodba, 95% pouzdani intervali za Y te srednju vrijednost od Y su puno uži. Također, statistika $R^2$ modela za transformirane podatke iznosi 0.9952 dok za originalne podatke iznosi 0.9663.
+Linearan model za transformirane podatke odnosno eksponencijalan model za originalne podatke je zasigurno bolji. Osim što je iz grafova vidljiva bolja prilagodba, 95% pouzdani intervali za Y te srednju vrijednost od Y su puno uži. Također, statistika \(R^2\) modela za transformirane podatke iznosi 0.9952 dok za originalne podatke iznosi 0.9663.
 
 # Zadatak B
 
@@ -221,19 +229,18 @@ Podaci se nalaze u datoteci zad55r.dat (Devore, Jay L., Probability and Statisti
 
 ## Prikaz podataka u Kartezijevom koordinatnom sustavu
 
-Na sljedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog skupa:
+Na slijedećem dijagramu prikazani su parovi podataka (x, y) iz zadanog skupa:
 
 ```{r}
 B.data <- read.table("zad55r.dat", header = TRUE, sep = " ")
 B.data <- data.frame(B.data)
 
-plot(B.data, xlab = "broj dana proteklih od sjetve zita,(N)", ylab = "urod,(kg/ha)",
-     main="Utjecaj datuma zetve na urod")
+plot(B.data, xlab = "broj dana proteklih od sjetve žita,(N)", ylab = "Urod,(kg/ha)", main="Utjecaj datuma žetve na urod")
 ```
 
 ## Prilagodba kvadratičnog modela
 
-Prvi model čiju ćemo prilagodbu provesti jest sljedeći kvadratični model: $y = \theta_0 + \theta_1 x + \theta_2 x^2$
+Prvi model čiju ćemo prilagodbu provesti jest sljedeći kvadratični model: $$y = \theta_0 + \theta_1 x + \theta_2 x^2$$
 
 ```{r}
 urod <- B.data$y
@@ -249,12 +256,10 @@ Sljedeći graf prikazuje parabolu dobivenu prilagodbom navedenog modela s empiri
 f = function(x, koeficijenti)
   return(koeficijenti[[1]] + koeficijenti[[2]] * x + koeficijenti[[3]] * x^2)
 
-plot(N, urod, xlab = "broj dana proteklih od sjetve zita", ylab = "urod, (kg/ha)",
-     main="Utjecaj datuma zetve na urod")
+plot(N, urod, xlab = "Broj dana proteklih od sjetve žita", ylab = "Urod, (kg/ha)",
+     main="Utjecaj datuma žetve na urod")
 curve(f(x, model$coefficients), add = TRUE, col = "red")
-summary(model)
 ```
-Vrijednost statistike $R^2$ se može vidjeti pozivom funkcije summary nad modelom i iznosi 0.7939.
 
 ## Provjera normalnosti reziduala
 
@@ -264,10 +269,10 @@ Radi toga radimo provjeru normalnosti na sljedeća dva načina: grafički (QQ pl
 ```{r}
 par(mfrow=c(1,2))
 
-plot(N, model$residuals, xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(N, model$residuals, xlab='Broj dana proteklih od sjetve žita', ylab = 'Iznos reziduala',
      main = 'Graf reziduala')
 
-plot(N, rstandard(model), xlab='Redni broj reziduala', ylab = 'Iznos reziduala',
+plot(N, rstandard(model), xlab='Broj dana proteklih od sjetve žita', ylab = 'Iznos reziduala',
      main = 'Graf standardiziranih reziduala')
 ```
 
@@ -293,31 +298,13 @@ Provedbom Kolmogorov-Smirnovljevog testa dobivamo p-vrijednost jednaku 0.9857. T
 summary(model)
 ```
 
-Testiramo sljedeću hipotezu: $H_0 : \theta_2 = 0$, u odnosu na alternativu $H_a : \theta_2 != 0$. Kao što je vidljivo iz izlaza funkcije summary, p-vrijednost za parametar $\theta_2$ (koji stoji uz $x^2$) iznosi $1.40\cdot10^{-5}$. 
-Prema tome, uz razinu značajnosti $\alpha=1%$, odbacujemo nultu hipotezu u korist alternative. $\theta_2$ je značajan koeficijent.
-
-```{r}
-
-N.confidence = confint(model, 'N', level=0.95)
-N.confidence
-N.squared.confidence = confint(model, 'N.squared', level=0.95)
-N.squared.confidence
-help(plot)
-help(plot)
-plot(c(100,500), type='n', c(-7,-2), panel.first=grid(),xlab = "N koeficijent", ylab = "N^2 koeficijent")
-rect(xleft=N.confidence[1,1], ybottom=N.squared.confidence[1,1], xright=N.confidence[1,2], ytop=N.squared.confidence[1,2],col='gray')
-
-require('car')
-confidenceEllipse(model,fill=TRUE,levels=0.95,xlab = "N koeficijent", ylab = "N^2 koeficijent",col='black')
-```
-
-Iz prvog grafa u kojem uspoređujemo pouzdane intervale za parametre prihvaćenog modela vidimo kako je interval za koeficijent uz $x^2$ je za dva reda veličine manji od interval za koeficijent uz $x$. Usporedbom tog grafa i drugog grafa (prikaz pouzdanog područja za parametre modela) vidimo kako je površina elipse (95% pouzdano područje) manja od umnoška pouzdanih intervala prvog i drugog parametra.
+Testiramo sljedeću hipotezu: \(H_0 : \theta_2 = 0\), u odnosu na alternativu \(H_a : \theta_2 != 0\). Kao što je vidljivo, p-vrijednost za parametar \(\theta_2\) (koji stoji uz \( x^2 \)) iznosi \(1.40\cdot10^{-5}\). 
+Prema tome, uz razinu značajnosti \( \alpha = 1 \% \), odbacujemo nultu hipotezu u korist alternative. \(theta_2\) je značajan koeficijent.
 
 ## Krivulje 95% pouzdanih intervala
 
 ```{r}
-help(plot)
-plot(N,urod,ylim=c(2000, 4200), xlab="broj dana proteklih od sjetve zita", ylab="Urod, (kg/ha)",main="Utjecaj datuma zetve na urod")
+plot(N,urod)
 prediction = predict.lm(model,B.data,interval = "prediction")
 confidence = predict.lm(model,B.data,interval = "confidence")
 
@@ -347,19 +334,12 @@ X <- C.data$x
 Y <- C.data$y
 Z <- C.data$z
 
-plot (X,Z, xlab = "proteini brasna [%]",ylab = "apsorpcija [%]",
-      main="Prikaz podataka X,Z")
-plot (Y,Z, xlab = "gubitak skroba [Farrandove jedinice]",ylab = "apsorpcija [%]",
-      main="Prikaz podataka Y,Z")
-plot (X,Y, xlab = "proteini brasna [%]",ylab = "gubitak skroba [Farrandove jedinice]",
-      main="Prikaz podataka X,Y")
+plot (X,Z, xlab = "proteini brašna [%]",ylab = "apsorpcija [%]", main="Prikaz podataka X,Z")
+plot (Y,Z, xlab = "gubitak škroba [Farrandove jedinice]",ylab = "apsorpcija [%]", main="Prikaz podataka Y,Z")
+plot (X,Y, xlab = "proteini brašna [%]",ylab = "gubitak škroba [Farrandove jedinice]", main="Prikaz podataka X,Y")
 
 require(scatterplot3d)
-scatterplot3d(X,Y,Z, pch = 19, color = "green4",
-              xlab="proteini brasna [%]",
-              ylab="gubitak skroba [Farrandove jedinice]",
-              zlab = "apsorpcija [%]",
-              main ="Prikaz podataka X,Y,Z" )
+scatterplot3d(X,Y,Z, pch = 19, color = "green4", xlab="proteini brašna [%]",ylab="gubitak škroba [Farrandove jedinice]",zlab = "apsorpcija [%]",main ="Prikaz podataka X,Y,Z" )
 
 ```
 ## Testovi korelacije
@@ -371,7 +351,7 @@ cor(Y,Z)
 cor.test(Y,Z)
 ```
 
-Nad parom (Y,Z) smo radili Pearsonov test korelacije. Iz dobivenih rezultata vidimo da je $r$ = 0.946518 te zaključujemo da su podaci pozitivno korelirani. P-vrijednost iz testa koreliranosti je jako mala ($2.751e-14$) pa možemo odbaciti hipotezu da je koreliranost jednaka 0. Možemo primjetiti povezanost između velike korelacije i male p-vrijednosti.
+Nad parom (Y,Z) smo radili Pearsonov test korelacije. Iz dobivenih rezultata vidimo da je \(r\) = 0.946518 te zaključujemo da su podaci pozitivno korelirani. P-vrijednost iz testa koreliranosti je jako mala (\(2.751e-14\)) pa možemo odbaciti hipotezu da je koreliranost jednaka 0. Možemo primjetiti povezanost između velike korelacije i male p-vrijednosti.
 
 
 ```{r}
@@ -389,14 +369,14 @@ cor.test(noviX,noviY,method = "spearman")
 
 ```
 Nad parom (X,Y) smo radili Spearmanov test korelacije. Pomoću rezultata naslućujemo da je korelacija između danih podataka jako mala jer je $r$ = 0.2870111. P-vrijednost testa je 0.1386 pa ne možemo odbaciti hipotezu da je korelacija jednaka 0. 
-Problem kod Spearmanovog testa je što ne može naći egzaktnu p-vrijednost ako ima jednake vrijendosti. Zbog toga smo napravili šum za obje varijable X i Y koji je iz normalne distribucije $N (0, 0.0001)$. Ponovno smo izračunali stupanj korelacije i napravili Spearmanov test. Novo dobivene vrijednosti se malo razlikuju od prijašnjih pa zbog p-vrijednosti veće od 0.05 ne možemo zaključiti da je korelacija različita od 0.   
+Problem kod Spearmanovog testa je što ne može naći egzaktnu p-vrijednost ako ima jednake vrijendosti. Zbog toga smo napravili šum za obje varijable X i Y koji je iz normalne distribucije \(N (0, 0.0001)\). Ponovno smo izračunali stupanj korelacije i napravili Spearmanov test. Novo dobivene vrijednosti se malo razlikuju od prijašnjih pa zbog p-vrijednosti veće od 0.05 ne možemo zaključiti da je korelacija različita od 0.   
 
 
 ## Prilagodba linearnog modela
 
 Sljedeći korak našeg zadatka su prilagodbe linearnih modela.
 Prvi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
-$z = \alpha_0 + \alpha_1 x $
+$$z = \alpha_0 + \alpha_1 x $$
 
 ```{r}
 X <- C.data$x
@@ -408,7 +388,7 @@ model <- lm (Z ~ X)
 Sljedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima. Dobili smo pravac $z = 3.321*x + 7.753$.
 
 ```{r}
-plot(X, Z, xlab = "proteini brasna [%]", ylab = "Apsorpcija [%]",
+plot(X, Z, xlab = "proteini brašna [%]", ylab = "Apsorpcija [%]",
      main="Prilagodba modela")
 lines(X, model$fitted.values, col="red")
 ```
@@ -416,11 +396,11 @@ lines(X, model$fitted.values, col="red")
 ```{r}
 summary(model)
 ```
-Iz sažetka iznad doznajemo vrijednost statistike $R^2$ koja iznosi 0.4777. Možemo biti zadovoljni dobivenim rezultatom.  
+Iz sažetka iznad doznajemo vrijednost statistike \(R^2\) koja iznosi 0.4777. Možemo biti zadovoljni dobivenim rezultatom.  
 
 
 Drugi model čiju ćemo prilagodbu provesti jest slijedeći linearni model:
-$z = \beta_0 + \beta_1 y $
+$$z = \beta_0 + \beta_1 y $$
 
 ```{r}
 Y <- C.data$y
@@ -429,9 +409,9 @@ Z <- C.data$z
 model2 <- lm (Z ~ Y)
 ```
 
-Slijedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima. Dobili smo pravac $z = 0.39722*y + 34.21809$.
+Slijedeći graf prikazuje pravac dobiven prilagodbom navedenog modela zajedno s empirijskim podacima. Dobili smo pravac \(z = 0.39722*y + 34.21809\).
 ```{r}
-plot(Y, Z, xlab = "gubitak skroba [Farrandove jedinice]", ylab = "Apsorpcija [%]",
+plot(Y, Z, xlab = "gubitak škroba [Farrandove jedinice]", ylab = "Apsorpcija [%]",
      main="Prilagodba modela")
 lines(Y, model2$fitted.values, col="red")
 ```
@@ -440,13 +420,13 @@ lines(Y, model2$fitted.values, col="red")
 summary(model2)
 ```
 
-Iz sažetka pripradnog modela možemo očitati vrijednost statistike $R^2$ koja iznosi 0.8959. Primjećujemo da je vrijednost statistike $R^2$ veća nego za prvi model čime možemo naslutiti da će koeficijent uz varijablu x biti veći nego uz y u zadnjem modelu.
+Iz sažetka pripradnog modela možemo očitati vrijednost statistike \(R^2\) koja iznosi 0.8959. Primjećujemo da je vrijednost statistike \(R^2\) veća nego za prvi model čime možemo naslutiti da će koeficijent uz varijablu y biti značajniji nego uz x u proširenom modelu.
 
 ## Prilagodba linearnog modela s dvije nezavisne varijable
 
 Nakon što smo radili prilagodbe s jednom nezavisnom varijablom radimo prilagodbu s dvije nezavisne varijable. 
 Sljedeći model čiju ćemo prilagodbu provesti jest sljedeći linearni model:
-$z = \theta_0 + \theta_1 x + \theta_2 y $
+$$z = \theta_0 + \theta_1 x + \theta_2 y $$
 ```{r}
 X <- C.data$x
 Y <- C.data$y
@@ -474,8 +454,8 @@ Iz sažetka očitavamo da je vrijednost statistike $R^2$ = 0.9645. Pošto su p-v
 anova(model,model3)
 anova(model2,model3)
 ```
-Koristeći ANOVU usporedili smo prvi model $z = \alpha_0 + \alpha_1 x $ i treći model $z = \theta_0 + \theta_1 x + \theta_2 y $. Pošto smo dobili da je p-vrijednost jednaka 4.181e-16 možemo odbaciti hipotezu da je novododani koeficijent jednak 0. Zaključujemo da je prošireni model bolji od reduciranog.
-Zatim smo uspredili drugi model $z = \beta_0 + \beta_1 y $ i treći model $z = \theta_0 + \theta_1 x + \theta_2 y $. Ponovno smo dobili jaku malu p-vrijednost koja iznosi 2.789e-07 te možemo odbaciti hipotezu da podaci podržavaju reducirani oblik. 
+Koristeći ANOVU usporedili smo prvi model \(z = \alpha_0 + \alpha_1 x \) i treći model \(z = \theta_0 + \theta_1 x + \theta_2 y \). Pošto smo dobili da je p-vrijednost jednaka \(4.181e-16\) možemo odbaciti hipotezu da je novododani koeficijent jednak 0. Zaključujemo da je prošireni model bolji od reduciranog.
+Zatim smo uspredili drugi model \(z = \beta_0 + \beta_1 y \) i treći model \(z = \theta_0 + \theta_1 x + \theta_2 y \). Ponovno smo dobili jaku malu p-vrijednost koja iznosi \(2.789e-07\) te možemo odbaciti hipotezu da podaci podržavaju reducirani oblik. 
 
 ## Provjera normalnosti reziduala
 
@@ -511,6 +491,7 @@ Rezultati Kolmogorov-Smirnov potvrđuju nam da podaci dolaze iz normalne razdiob
 Na sljedećem grafu su prikazani originalni podaci zajedno s plohama za intervale predikcije (siva boja) i intervale pouzdanosti (crvena boja).
 
 ```{r}
+
 require(scatterplot3d)
 require(plot3D)
 #scatterplot3d(X,Y,Z, pch = 19, color = "green4", main="3D Scatterplot")
